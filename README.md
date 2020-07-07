@@ -1,2 +1,2 @@
 # goclc
-GoCLC is a command line chat interface written in, you guessed it, Go!
+GoCLC is a command line, multi-user chat server and client written in, you guessed it, Go!
