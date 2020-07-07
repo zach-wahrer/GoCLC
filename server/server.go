@@ -13,7 +13,7 @@ const helpMessage = "Available Commands:\n" +
 	"\\help - prints this help message\n"
 const unknownCommandError = "unknown command"
 
-// Listen for incommimng connections
+// Listen for incoming connections
 func Listen(address, port string) {
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", address, port))
 	if err != nil {
