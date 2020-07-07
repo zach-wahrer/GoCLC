@@ -29,7 +29,7 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	if _, err := io.Copy(reply, conn); err != nil {
 		t.Errorf("unexpected server error: %v", err)
 	}
-	want := "Welcome"
+	want := serverGreeting
 	if reply.String() != want {
 		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply)
 	}
