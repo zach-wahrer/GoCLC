@@ -22,7 +22,7 @@ func Listen(address, port string) {
 			log.Print(err)
 			continue
 		}
-		handleConn(conn)
+		go handleConn(conn)
 	}
 }
 
