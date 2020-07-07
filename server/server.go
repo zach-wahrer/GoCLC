@@ -7,6 +7,7 @@ import (
 	"net"
 )
 
+// Listen for incommimng connections
 func Listen(address, port string) {
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", address, port))
 	if err != nil {
