@@ -10,3 +10,10 @@ func TestCommandGreet(t *testing.T) {
 		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", serverGreeting, got)
 	}
 }
+
+func TestCommandUnknown(t *testing.T) {
+	got := runCommand("gibberish")
+	if got != unknownCommandError {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", unknownCommandError, got)
+	}
+}

@@ -8,6 +8,7 @@ import (
 )
 
 const serverGreeting = "Welcome to the GoCLC Server!\n"
+const unknownCommandError = "unknown command"
 
 // Listen for incommimng connections
 func Listen(address, port string) {

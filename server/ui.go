@@ -5,7 +5,6 @@ func runCommand(command string) string {
 	case "greet":
 		return serverGreeting
 	default:
-		return "goclc: error: unknown command"
+		return unknownCommandError
 	}
-
 }
