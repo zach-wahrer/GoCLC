@@ -8,6 +8,9 @@ import (
 )
 
 const serverGreeting = "Welcome to the GoCLC Server!\n"
+const helpMessage = "Available Commands:\n" +
+	"\\greet - show server welcome message\n" +
+	"\\help - prints this help message\n"
 const unknownCommandError = "unknown command"
 
 // Listen for incommimng connections
