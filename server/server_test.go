@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -43,6 +44,37 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	want = serverGoodbye
 	if reply.Text()+"\n" != want {
 		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply.Text())
+	}
+
+}
+
+func TestHelpCommand(t *testing.T) {
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", testAddress, testPort))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+
+	reply := bufio.NewScanner(conn)
+	reply.Scan() // Skip welcome message
+
+	if _, err := io.WriteString(conn, "/help\n"); err != nil {
+		t.Errorf("unexpected server error: %v", err)
+	}
+
+	helpLines := len(strings.Split(helpMessage, "\n"))
+	combinedReply := ""
+	for i := 0; i < helpLines-1; i++ {
+		reply.Scan()
+		combinedReply += reply.Text() + "\n"
+	}
+
+	want := helpMessage
+	if combinedReply != want {
+		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply.Text())
+	}
+	if _, err := io.WriteString(conn, "/exit\n"); err != nil {
+		t.Errorf("unexpected server error: %v", err)
 	}
 
 }
