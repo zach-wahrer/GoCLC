@@ -40,14 +40,16 @@ func handleConn(c net.Conn) {
 	input := bufio.NewScanner(c)
 	for input.Scan() {
 		command := input.Text()
+		if command == "/quit" || command == "/exit" || command == "/q" {
+			break
+		}
+
 		if command[0] == '/' {
-			if command == "/quit" || command == "/exit" || command == "/q" {
-				break
-			} else {
-				if _, err := io.WriteString(c, runCommand(command)); err != nil {
-					log.Print(err)
-				}
+			if _, err := io.WriteString(c, runCommand(command)); err != nil {
+				log.Print(err)
 			}
+		} else {
+			// Todo - Send out chat message
 		}
 	}
 
