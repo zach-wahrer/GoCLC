@@ -48,7 +48,7 @@ func TestConnectionAndServerResponse(t *testing.T) {
 
 }
 
-func TestHelpCommand(t *testing.T) {
+func TestServerResponseForHelp(t *testing.T) {
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", testAddress, testPort))
 	if err != nil {
 		t.Fatal(err)
