@@ -11,6 +11,13 @@ func TestCommandGreet(t *testing.T) {
 	}
 }
 
+func TestCommandGoodbye(t *testing.T) {
+	got := runCommand("/goodbye")
+	if got != serverGoodbye {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", serverGoodbye, got)
+	}
+}
+
 func TestCommandHelp(t *testing.T) {
 	got := runCommand("/help")
 	if got != helpMessage {
