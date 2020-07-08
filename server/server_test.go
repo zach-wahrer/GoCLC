@@ -22,10 +22,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestConnectionAndServerResponse(t *testing.T) {
-	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", testAddress, testPort))
-	if err != nil {
-		t.Fatal(err)
-	}
+	conn := createTestConnection(t)
 	defer conn.Close()
 
 	reply := bufio.NewScanner(conn)
@@ -49,10 +46,7 @@ func TestConnectionAndServerResponse(t *testing.T) {
 }
 
 func TestServerResponseForHelp(t *testing.T) {
-	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", testAddress, testPort))
-	if err != nil {
-		t.Fatal(err)
-	}
+	conn := createTestConnection(t)
 	defer conn.Close()
 
 	reply := bufio.NewScanner(conn)
@@ -77,4 +71,12 @@ func TestServerResponseForHelp(t *testing.T) {
 		t.Errorf("unexpected server error: %v", err)
 	}
 
+}
+
+func createTestConnection(t *testing.T) net.Conn {
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", testAddress, testPort))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return conn
 }
