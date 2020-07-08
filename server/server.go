@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"log"
@@ -8,6 +9,7 @@ import (
 )
 
 const serverGreeting = "Welcome to the GoCLC Server!\n"
+const serverGoodbye = "Goodbye!\n"
 const helpMessage = "Available Commands:\n" +
 	"\\greet - show server welcome message\n" +
 	"\\help - prints this help message\n"
@@ -33,6 +35,17 @@ func handleConn(c net.Conn) {
 	defer c.Close()
 	reply := runCommand("/greet")
 	if _, err := io.WriteString(c, reply); err != nil {
+		log.Print(err)
+	}
+	input := bufio.NewScanner(c)
+	for input.Scan() {
+		command := input.Text()
+		if command == "/quit" || command == "/exit" || command == "/q" {
+			break
+		}
+	}
+
+	if _, err := io.WriteString(c, serverGoodbye); err != nil {
 		log.Print(err)
 	}
 }

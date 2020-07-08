@@ -1,12 +1,13 @@
 package server
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
 	"io"
 	"net"
 	"os"
 	"testing"
+	"time"
 )
 
 const testAddress = "localhost"
@@ -14,6 +15,7 @@ const testPort = "8000"
 
 func TestMain(m *testing.M) {
 	go Listen(testAddress, testPort)
+	time.Sleep(5 * time.Millisecond)
 	code := m.Run()
 	os.Exit(code)
 }
@@ -25,13 +27,22 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	}
 	defer conn.Close()
 
-	reply := new(bytes.Buffer)
-	if _, err := io.Copy(reply, conn); err != nil {
+	reply := bufio.NewScanner(conn)
+
+	reply.Scan()
+	want := serverGreeting
+	if reply.Text()+"\n" != want {
+		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply.Text())
+	}
+
+	if _, err := io.WriteString(conn, "/exit\n"); err != nil {
 		t.Errorf("unexpected server error: %v", err)
 	}
-	want := serverGreeting
-	if reply.String() != want {
-		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply)
+
+	reply.Scan()
+	want = serverGoodbye
+	if reply.Text()+"\n" != want {
+		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply.Text())
 	}
 
 }
