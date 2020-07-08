@@ -32,9 +32,7 @@ func TestConnectionAndServerResponse(t *testing.T) {
 		unexpectedServerReplyError(t, serverGreeting, reply.Text())
 	}
 
-	if _, err := io.WriteString(conn, "/exit\n"); err != nil {
-		unexpectedServerError(t, err)
-	}
+	sendInputToServer(t, conn, "/exit\n")
 
 	reply.Scan()
 	if reply.Text()+"\n" != serverGoodbye {
@@ -50,9 +48,7 @@ func TestServerResponseForHelp(t *testing.T) {
 	reply := bufio.NewScanner(conn)
 	reply.Scan() // Skip welcome message
 
-	if _, err := io.WriteString(conn, "/help\n"); err != nil {
-		unexpectedServerError(t, err)
-	}
+	sendInputToServer(t, conn, "/help\n")
 
 	helpLines := len(strings.Split(helpMessage, "\n"))
 	combinedReply := ""
@@ -64,10 +60,27 @@ func TestServerResponseForHelp(t *testing.T) {
 	if combinedReply != helpMessage {
 		unexpectedServerReplyError(t, helpMessage, combinedReply)
 	}
-	if _, err := io.WriteString(conn, "/exit\n"); err != nil {
+
+	sendInputToServer(t, conn, "/exit\n")
+
+}
+
+// func TestServerGetUsername(t *testing.T) {
+// 	conn := createTesetConnection(t)
+// 	defer conn.Close()
+//
+// 	reply := bufio.NewScanner(conn)
+// 	reply.Scan() // Skip welcome message
+//
+// 	if _, err := io.WriteString(conn, "TestUser\n"); err != nil {
+//
+// 	}
+// }
+
+func sendInputToServer(t *testing.T, conn net.Conn, input string) {
+	if _, err := io.WriteString(conn, input); err != nil {
 		unexpectedServerError(t, err)
 	}
-
 }
 
 func unexpectedServerReplyError(t *testing.T, want, got string) {
