@@ -9,6 +9,7 @@ import (
 )
 
 const serverGreeting = "Welcome to the GoCLC Server!\n"
+const userGreeting = "Hello, "
 const serverGoodbye = "Goodbye!\n"
 const helpMessage = "Available Commands:\n" +
 	"/greet - show server welcome message\n" +
@@ -31,13 +32,10 @@ func Listen(address, port string) {
 	}
 }
 
-func handleConn(c net.Conn) {
-	defer c.Close()
-	reply := runCommand("/greet")
-	if _, err := io.WriteString(c, reply); err != nil {
-		log.Print(err)
-	}
-	input := bufio.NewScanner(c)
+func handleConn(conn net.Conn) {
+	defer conn.Close()
+	writeToRemote(conn, runCommand("/greet"))
+	input := bufio.NewScanner(conn)
 	for input.Scan() {
 		command := input.Text()
 		if command == "/quit" || command == "/exit" || command == "/q" {
@@ -45,15 +43,17 @@ func handleConn(c net.Conn) {
 		}
 
 		if command[0] == '/' {
-			if _, err := io.WriteString(c, runCommand(command)); err != nil {
-				log.Print(err)
-			}
+			writeToRemote(conn, runCommand(command))
 		} else {
 			// Todo - Send out chat message
 		}
 	}
 
-	if _, err := io.WriteString(c, serverGoodbye); err != nil {
+	writeToRemote(conn, serverGoodbye)
+}
+
+func writeToRemote(conn net.Conn, input string) {
+	if _, err := io.WriteString(conn, input); err != nil {
 		log.Print(err)
 	}
 }
