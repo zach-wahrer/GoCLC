@@ -28,19 +28,17 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	reply := bufio.NewScanner(conn)
 
 	reply.Scan()
-	want := serverGreeting
-	if reply.Text()+"\n" != want {
-		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply.Text())
+	if reply.Text()+"\n" != serverGreeting {
+		unexpectedServerReplyError(t, serverGreeting, reply.Text())
 	}
 
 	if _, err := io.WriteString(conn, "/exit\n"); err != nil {
-		t.Errorf("unexpected server error: %v", err)
+		unexpectedServerError(t, err)
 	}
 
 	reply.Scan()
-	want = serverGoodbye
-	if reply.Text()+"\n" != want {
-		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply.Text())
+	if reply.Text()+"\n" != serverGoodbye {
+		unexpectedServerReplyError(t, serverGoodbye, reply.Text())
 	}
 
 }
@@ -53,7 +51,7 @@ func TestServerResponseForHelp(t *testing.T) {
 	reply.Scan() // Skip welcome message
 
 	if _, err := io.WriteString(conn, "/help\n"); err != nil {
-		t.Errorf("unexpected server error: %v", err)
+		unexpectedServerError(t, err)
 	}
 
 	helpLines := len(strings.Split(helpMessage, "\n"))
@@ -63,14 +61,21 @@ func TestServerResponseForHelp(t *testing.T) {
 		combinedReply += reply.Text() + "\n"
 	}
 
-	want := helpMessage
-	if combinedReply != want {
-		t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, reply.Text())
+	if combinedReply != helpMessage {
+		unexpectedServerReplyError(t, helpMessage, combinedReply)
 	}
 	if _, err := io.WriteString(conn, "/exit\n"); err != nil {
-		t.Errorf("unexpected server error: %v", err)
+		unexpectedServerError(t, err)
 	}
 
+}
+
+func unexpectedServerReplyError(t *testing.T, want, got string) {
+	t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, got)
+}
+
+func unexpectedServerError(t *testing.T, err error) {
+	t.Errorf("unexpected server error: %v", err)
 }
 
 func createTestConnection(t *testing.T) net.Conn {
