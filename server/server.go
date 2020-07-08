@@ -34,10 +34,13 @@ func Listen(address, port string) {
 
 func handleConn(conn net.Conn) {
 	defer conn.Close()
+
 	writeToRemote(conn, runCommand("/greet"))
+
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
 		command := input.Text()
+
 		if command == "/quit" || command == "/exit" || command == "/q" {
 			break
 		}
@@ -49,7 +52,7 @@ func handleConn(conn net.Conn) {
 		}
 	}
 
-	writeToRemote(conn, serverGoodbye)
+	writeToRemote(conn, runCommand("/goodbye"))
 }
 
 func writeToRemote(conn net.Conn, input string) {
