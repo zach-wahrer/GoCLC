@@ -36,18 +36,18 @@ func Listen(address, port string) {
 
 func handleConn(conn net.Conn) {
 	defer conn.Close()
+	var client = Client{c: conn, recieve: bufio.NewScanner(conn)}
 
 	writeToRemote(conn, runCommand("/greet"))
 
-	recieve := bufio.NewScanner(conn)
 	writeToRemote(conn, runCommand("/askUsername"))
-	recieve.Scan()
-	addUser(recieve.Text())
-	writeToRemote(conn, fmt.Sprintf("%s %s%s", userGreeting, recieve.Text(), userGreetingPunc))
+	client.recieve.Scan()
+	addUser(client.recieve.Text())
+	writeToRemote(conn, fmt.Sprintf("%s %s%s", userGreeting, client.recieve.Text(), userGreetingPunc))
 
-	for recieve.Scan() {
+	for client.recieve.Scan() {
 
-		command := recieve.Text()
+		command := client.recieve.Text()
 		if command == "/quit" || command == "/exit" || command == "/q" {
 			break
 		}
