@@ -3,7 +3,6 @@ package server
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"net"
 )
@@ -38,12 +37,12 @@ func handleConn(conn net.Conn) {
 	defer conn.Close()
 	var client = Client{c: conn, recieve: bufio.NewScanner(conn)}
 
-	writeToRemote(conn, runCommand("/greet"))
+	client.Write(runCommand("/greet"))
 
-	writeToRemote(conn, runCommand("/askUsername"))
+	client.Write(runCommand("/askUsername"))
 	client.recieve.Scan()
 	addUser(client.recieve.Text())
-	writeToRemote(conn, fmt.Sprintf("%s %s%s", userGreeting, client.recieve.Text(), userGreetingPunc))
+	client.Write(fmt.Sprintf("%s %s%s", userGreeting, client.recieve.Text(), userGreetingPunc))
 
 	for client.recieve.Scan() {
 
@@ -53,17 +52,11 @@ func handleConn(conn net.Conn) {
 		}
 
 		if command[0] == '/' {
-			writeToRemote(conn, runCommand(command))
+			client.Write(runCommand(command))
 		} else {
 			// Todo - Send out chat message
 		}
 	}
 
-	writeToRemote(conn, runCommand("/goodbye"))
-}
-
-func writeToRemote(conn net.Conn, input string) {
-	if _, err := io.WriteString(conn, input); err != nil {
-		log.Print(err)
-	}
+	client.Write(runCommand("/goodbye"))
 }
