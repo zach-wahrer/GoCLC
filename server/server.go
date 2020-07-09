@@ -9,7 +9,9 @@ import (
 )
 
 const serverGreeting = "Welcome to the GoCLC Server!\n"
-const userGreeting = "Hello, "
+const askUsername = "Please enter a username:\n"
+const userGreeting = "Hello,"
+const userGreetingPunc = "!\n"
 const serverGoodbye = "Goodbye!\n"
 const helpMessage = "Available Commands:\n" +
 	"/greet - show server welcome message\n" +
@@ -38,9 +40,14 @@ func handleConn(conn net.Conn) {
 	writeToRemote(conn, runCommand("/greet"))
 
 	input := bufio.NewScanner(conn)
-	for input.Scan() {
-		command := input.Text()
+	writeToRemote(conn, runCommand("/askUsername"))
+	input.Scan()
+	addUser(input.Text())
+	writeToRemote(conn, fmt.Sprintf("%s %s%s", userGreeting, input.Text(), userGreetingPunc))
 
+	for input.Scan() {
+
+		command := input.Text()
 		if command == "/quit" || command == "/exit" || command == "/q" {
 			break
 		}
