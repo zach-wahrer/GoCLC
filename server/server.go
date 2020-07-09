@@ -28,8 +28,7 @@ func handleConn(conn net.Conn) {
 	var client = Client{c: conn, recieve: bufio.NewScanner(conn)}
 	login(client)
 	chat(client)
-
-	client.Write(runCommand("/goodbye"))
+	logout(client)
 }
 
 func login(client Client) {
@@ -53,4 +52,8 @@ func chat(client Client) {
 			// Todo - Send out chat message
 		}
 	}
+}
+
+func logout(client Client) {
+	client.Write(runCommand("/goodbye"))
 }
