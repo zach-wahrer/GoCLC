@@ -26,12 +26,7 @@ func Listen(address, port string) {
 func handleConn(conn net.Conn) {
 	defer conn.Close()
 	var client = Client{c: conn, recieve: bufio.NewScanner(conn)}
-
-	client.Write(runCommand("/greet"))
-	client.Write(runCommand("/askUsername"))
-	addUser(client.Read())
-	client.Write(fmt.Sprintf("%s %s%s", userGreeting, client.recieve.Text(), userGreetingPunc))
-
+	login(client)
 	for {
 		command := client.Read()
 
@@ -47,4 +42,11 @@ func handleConn(conn net.Conn) {
 	}
 
 	client.Write(runCommand("/goodbye"))
+}
+
+func login(client Client) {
+	client.Write(runCommand("/greet"))
+	client.Write(runCommand("/askUsername"))
+	addUser(client.Read())
+	client.Write(fmt.Sprintf("%s %s%s", userGreeting, client.recieve.Text(), userGreetingPunc))
 }
