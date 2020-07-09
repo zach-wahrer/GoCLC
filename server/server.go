@@ -35,7 +35,9 @@ func login(client Client) {
 	client.Write(runCommand("/greet"))
 	client.Write(runCommand("/askUsername"))
 	addUser(client.Read())
-	client.Write(fmt.Sprintf("%s %s%s", userGreeting, client.recieve.Text(), userGreetingPunc))
+	fullUserGreeting := fmt.Sprintf("%s %s%s", userGreeting,
+		client.recieve.Text(), userGreetingPunc)
+	client.Write(fullUserGreeting)
 }
 
 func chat(client Client) {
