@@ -38,15 +38,13 @@ func handleConn(conn net.Conn) {
 	var client = Client{c: conn, recieve: bufio.NewScanner(conn)}
 
 	client.Write(runCommand("/greet"))
-
 	client.Write(runCommand("/askUsername"))
-	client.recieve.Scan()
-	addUser(client.recieve.Text())
+	addUser(client.Read())
 	client.Write(fmt.Sprintf("%s %s%s", userGreeting, client.recieve.Text(), userGreetingPunc))
 
-	for client.recieve.Scan() {
+	for {
+		command := client.Read()
 
-		command := client.recieve.Text()
 		if command == "/quit" || command == "/exit" || command == "/q" {
 			break
 		}

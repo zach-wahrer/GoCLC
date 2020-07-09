@@ -17,3 +17,8 @@ func (client Client) Write(input string) {
 		log.Print(err)
 	}
 }
+
+func (client Client) Read() string {
+	client.recieve.Scan()
+	return client.recieve.Text()
+}
