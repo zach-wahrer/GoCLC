@@ -39,15 +39,15 @@ func handleConn(conn net.Conn) {
 
 	writeToRemote(conn, runCommand("/greet"))
 
-	input := bufio.NewScanner(conn)
+	recieve := bufio.NewScanner(conn)
 	writeToRemote(conn, runCommand("/askUsername"))
-	input.Scan()
-	addUser(input.Text())
-	writeToRemote(conn, fmt.Sprintf("%s %s%s", userGreeting, input.Text(), userGreetingPunc))
+	recieve.Scan()
+	addUser(recieve.Text())
+	writeToRemote(conn, fmt.Sprintf("%s %s%s", userGreeting, recieve.Text(), userGreetingPunc))
 
-	for input.Scan() {
+	for recieve.Scan() {
 
-		command := input.Text()
+		command := recieve.Text()
 		if command == "/quit" || command == "/exit" || command == "/q" {
 			break
 		}
