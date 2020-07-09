@@ -11,6 +11,13 @@ func TestCommandGreet(t *testing.T) {
 	}
 }
 
+func TestCommandAskUsername(t *testing.T) {
+	got := runCommand("/askUsername")
+	if got != askUsername {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", askUsername, got)
+	}
+}
+
 func TestCommandGoodbye(t *testing.T) {
 	got := runCommand("/goodbye")
 	if got != serverGoodbye {

@@ -4,6 +4,8 @@ func runCommand(command string) string {
 	switch command {
 	case "/greet":
 		return serverGreeting
+	case "/askUsername":
+		return askUsername
 	case "/goodbye":
 		return serverGoodbye
 	case "/help":
@@ -11,4 +13,8 @@ func runCommand(command string) string {
 	default:
 		return unknownCommandError
 	}
+}
+
+func addUser(username string) {
+
 }
