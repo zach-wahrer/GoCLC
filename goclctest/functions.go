@@ -10,7 +10,7 @@ import (
 )
 
 const Address = "localhost"
-const Port = "8000"
+const Port = "9000"
 
 func CreateServerFixture(t *testing.T) (net.Conn, bufio.Scanner) {
 	conn := CreateTestConnection(t)
