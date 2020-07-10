@@ -10,6 +10,7 @@ import (
 type Client struct {
 	c       net.Conn
 	recieve *bufio.Scanner
+	name    string
 }
 
 func (client Client) Write(input string) {

@@ -36,9 +36,10 @@ func handleConn(conn net.Conn) {
 func login(client Client) {
 	client.Write(runCommand("/greet"))
 	client.Write(runCommand("/askUsername"))
-	addUser(client.Read())
+	client.name = client.Read()
+	addUser(client.name)
 	fullUserGreeting := fmt.Sprintf("%s %s%s", userGreeting,
-		client.recieve.Text(), userGreetingPunc)
+		client.name, userGreetingPunc)
 	client.Write(fullUserGreeting)
 }
 
