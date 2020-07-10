@@ -33,7 +33,7 @@ func CreateTestConnection(t *testing.T) net.Conn {
 
 func SendInputToServer(t *testing.T, conn net.Conn, input string) {
 	if _, err := io.WriteString(conn, input); err != nil {
-		UnexpectedServerError(t, err)
+		InternalServerError(t, err)
 	}
 }
 
@@ -41,6 +41,6 @@ func UnexpectedServerReplyError(t *testing.T, want, got string) {
 	t.Errorf("unexpected server reply: want \"%s\", got \"%s\"", want, got)
 }
 
-func UnexpectedServerError(t *testing.T, err error) {
+func InternalServerError(t *testing.T, err error) {
 	t.Errorf("unexpected server error: %v", err)
 }
