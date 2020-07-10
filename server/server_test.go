@@ -51,6 +51,13 @@ func TestServerResponseForHelp(t *testing.T) {
 
 }
 
+func TestEmptyInput(t *testing.T) {
+	conn, _ := createServerFixture(t)
+	defer conn.Close()
+	sendInputToServer(t, conn, "\n")
+	sendInputToServer(t, conn, "/exit\n")
+}
+
 func TestServerFixture(t *testing.T) {
 	conn := createTestConnection(t)
 	recieve := bufio.NewScanner(conn)
