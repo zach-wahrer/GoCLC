@@ -2,7 +2,7 @@
 GoCLC is a command line, multi-user chat server and client written in, you guessed it, Go!
 
 ## To Run Your Own Server
-Clone the repo, then execute `go run .` in the project's root directory. The server will begin running, listening on `localhost:8000`.
+Clone the repo, then execute `go run .` in the project's root directory. The server will begin running, listening on `localhost:8000`. Optionally, you can specify your own address and port with the `-address` and `-port` command flags, respectively.
 
 Since GoCLC is currently in the early stages of development, the server cannot do much more than greet a user and offer rudimentary commands. However, this will change rapidly, so keep an eye on this repo!
 
