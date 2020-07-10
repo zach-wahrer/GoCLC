@@ -8,8 +8,8 @@ Since GoCLC is currently in the early stages of development, the server cannot d
 
 ## To Run the Test Suite
 From the root of the project:
-`go test` will run integration tests for starting/running the server.
-`go test server` will run all unit tests related to the server code.
+* `go test` will run integration tests for starting/running the server.
+* `go test server` will run all unit tests related to the server code.
 
 ## Planned Features
 * General chat
