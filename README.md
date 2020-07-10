@@ -7,7 +7,9 @@ Clone the repo, then execute `go run .` in the project's root directory. The ser
 Since GoCLC is currently in the early stages of development, the server cannot do much more than greet a user and offer rudimentary commands. However, this will change rapidly, so keep an eye on this repo!
 
 ## To Run the Test Suite
-Execute `go test server/...` to run all tests related to the server code.
+From the root of the project:
+`go test` will run integration tests for starting/running the server.
+`go test server` will run all unit tests related to the server code.
 
 ## Planned Features
 * General chat
