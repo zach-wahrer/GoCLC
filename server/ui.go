@@ -16,7 +16,3 @@ func runCommand(command string) string {
 		return unknownCommandError
 	}
 }
-
-func addUser(username string) {
-
-}
