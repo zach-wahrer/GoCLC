@@ -44,11 +44,13 @@ func chat(client Client) {
 	for {
 		command := client.Read()
 
-		if command == "/quit" || command == "/exit" || command == "/q" {
+		if exitCommands[command] {
 			break
 		}
 
-		if command[0] == '/' {
+		if command == "" {
+			continue
+		} else if command[0] == '/' {
 			client.Write(runCommand(command))
 		} else {
 			// Todo - Send out chat message
