@@ -10,6 +10,7 @@ const serverGoodbye = "Goodbye!\n"
 
 const helpMessage = "Available Commands:\n" +
 	"/greet - show server welcome message\n" +
+	"/exit - leave the chat server\n" +
 	"/help - prints this help message\n"
 
 const unknownCommandError = "unknown command\n"
