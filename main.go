@@ -1,3 +1,4 @@
+// Package main starts a GoCLC server on the local machine
 package main
 
 import (
