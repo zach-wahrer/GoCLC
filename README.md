@@ -10,7 +10,7 @@ Since GoCLC is currently in the early stages of development, the server cannot d
 Execute `go test server/...` to run all tests related to the server code.
 
 ## Planned Features
-General chat
-\#Channel based chat    
-Private messaging between clients
-Encrypted message passing between client-server-client
+* General chat
+* \#Channel based chat
+* Private messaging between clients
+* Encrypted message passing between client-server-client
