@@ -42,5 +42,5 @@ func UnexpectedServerReplyError(t *testing.T, want, got string) {
 }
 
 func InternalServerError(t *testing.T, err error) {
-	t.Errorf("unexpected server error: %v", err)
+	t.Errorf("internal server error: %v", err)
 }
