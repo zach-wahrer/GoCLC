@@ -1,4 +1,4 @@
-module github.com/zachtheclimber/goclc
+module github.com/zachtheclimber/GoCLC
 
 go 1.13
 
