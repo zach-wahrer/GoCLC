@@ -51,7 +51,7 @@ func TestServerResponseForHelp(t *testing.T) {
 
 }
 
-func TestEmptyInput(t *testing.T) {
+func TestServerWithEmptyInput(t *testing.T) {
 	conn, _ := createServerFixture(t)
 	defer conn.Close()
 	sendInputToServer(t, conn, "\n")
