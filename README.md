@@ -16,3 +16,9 @@ From the root of the project:
 * \#Channel based chat
 * Private messaging between clients
 * Encrypted message passing between client-server-client
+* Comprehensive server logs
+
+## Maybe Features
+* GUI client
+* Web client
+* User registration / authentication
