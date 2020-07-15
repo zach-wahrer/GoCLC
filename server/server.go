@@ -32,19 +32,18 @@ func Listen(address, port string) {
 func handleConn(conn net.Conn, broadcast chan string) {
 	defer conn.Close()
 	var client = Client{c: conn, recieve: bufio.NewScanner(conn), broadcast: broadcast}
-	client.name = login(client)
+	login(&client)
 	chat(client)
 	logout(client)
 }
 
-func login(client Client) string {
+func login(client *Client) {
 	client.Write(runCommand("/greet"))
 	client.Write(runCommand("/askUsername"))
-	name := client.Read()
+	client.name = client.Read()
 	enrichedUserGreeting := fmt.Sprintf("%s %s%s", userGreeting,
-		name, userGreetingPunc)
+		client.name, userGreetingPunc)
 	client.Write(enrichedUserGreeting)
-	return name
 }
 
 func chat(client Client) {
