@@ -23,26 +23,26 @@ func TestMain(m *testing.M) {
 }
 
 func TestConnectionAndServerResponse(t *testing.T) {
-	conn, recieve := goclctest.CreateServerFixture(t)
+	conn, receive := goclctest.CreateServerFixture(t)
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/exit\n")
-	recieve.Scan()
-	if recieve.Text()+"\n" != serverGoodbye {
-		goclctest.UnexpectedServerReplyError(t, serverGoodbye, recieve.Text())
+	receive.Scan()
+	if receive.Text()+"\n" != serverGoodbye {
+		goclctest.UnexpectedServerReplyError(t, serverGoodbye, receive.Text())
 	}
 
 }
 
 func TestServerResponseForHelp(t *testing.T) {
-	conn, recieve := goclctest.CreateServerFixture(t)
+	conn, receive := goclctest.CreateServerFixture(t)
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/help\n")
 
 	helpLines := len(strings.Split(helpMessage, "\n"))
 	combinedReply := ""
 	for i := 0; i < helpLines-1; i++ {
-		recieve.Scan()
-		combinedReply += recieve.Text() + "\n"
+		receive.Scan()
+		combinedReply += receive.Text() + "\n"
 	}
 	if combinedReply != helpMessage {
 		goclctest.UnexpectedServerReplyError(t, helpMessage, combinedReply)
@@ -61,23 +61,23 @@ func TestServerWithEmptyInput(t *testing.T) {
 
 func TestServerFixture(t *testing.T) {
 	conn := goclctest.CreateTestConnection(t)
-	recieve := bufio.NewScanner(conn)
+	receive := bufio.NewScanner(conn)
 
-	recieve.Scan()
-	if recieve.Text()+"\n" != serverGreeting {
-		goclctest.UnexpectedServerReplyError(t, serverGreeting, recieve.Text())
+	receive.Scan()
+	if receive.Text()+"\n" != serverGreeting {
+		goclctest.UnexpectedServerReplyError(t, serverGreeting, receive.Text())
 	}
 
-	recieve.Scan()
-	if recieve.Text()+"\n" != askUsername {
-		goclctest.UnexpectedServerReplyError(t, askUsername, recieve.Text())
+	receive.Scan()
+	if receive.Text()+"\n" != askUsername {
+		goclctest.UnexpectedServerReplyError(t, askUsername, receive.Text())
 	}
 
 	goclctest.SendInputToServer(t, conn, TestUsername+"\n")
-	recieve.Scan()
+	receive.Scan()
 	want := fmt.Sprintf("%s %s%s", userGreeting, TestUsername, userGreetingPunc)
-	if recieve.Text()+"\n" != want {
-		goclctest.UnexpectedServerReplyError(t, want, recieve.Text())
+	if receive.Text()+"\n" != want {
+		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
 	}
 
 	goclctest.SendInputToServer(t, conn, "/exit\n")

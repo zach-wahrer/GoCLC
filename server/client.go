@@ -10,12 +10,20 @@ import (
 
 type Client struct {
 	c       net.Conn
-	recieve *bufio.Scanner
+	receive *bufio.Scanner
 	send    chan string
+	address string
 	name    string
 }
 
-// func
+func NewClient(conn net.Conn, send chan string) Client {
+	client := Client{
+		c:       conn,
+		receive: bufio.NewScanner(conn),
+		send:    send,
+		address: conn.RemoteAddr().String()}
+	return client
+}
 
 func (client Client) Write(input string) {
 	if _, err := io.WriteString(client.c, input); err != nil {
@@ -24,8 +32,8 @@ func (client Client) Write(input string) {
 }
 
 func (client Client) Read() string {
-	client.recieve.Scan()
-	return client.recieve.Text()
+	client.receive.Scan()
+	return client.receive.Text()
 }
 
 func (client Client) Broadcast(message string) {

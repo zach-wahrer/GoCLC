@@ -2,7 +2,6 @@
 package server
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net"
@@ -29,7 +28,7 @@ func Listen(address, port string) {
 
 func handleConn(conn net.Conn, broadcaster *Broadcaster) {
 	defer conn.Close()
-	var client = Client{c: conn, recieve: bufio.NewScanner(conn), send: broadcaster.recieve}
+	client := NewClient(conn, broadcaster.receive)
 	login(&client)
 	broadcaster.addClient(&client)
 	chat(client)

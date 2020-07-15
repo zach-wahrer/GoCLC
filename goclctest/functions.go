@@ -15,13 +15,13 @@ const TestUsername = "TestUsername"
 
 func CreateServerFixture(t *testing.T) (net.Conn, bufio.Scanner) {
 	conn := CreateTestConnection(t)
-	recieve := bufio.NewScanner(conn)
+	receive := bufio.NewScanner(conn)
 
-	recieve.Scan() // Server Greeting
-	recieve.Scan() // Ask Username
+	receive.Scan() // Server Greeting
+	receive.Scan() // Ask Username
 	SendInputToServer(t, conn, TestUsername+"\n")
-	recieve.Scan() // User Greeting
-	return conn, *recieve
+	receive.Scan() // User Greeting
+	return conn, *receive
 }
 
 func CreateTestConnection(t *testing.T) net.Conn {

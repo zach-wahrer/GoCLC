@@ -2,14 +2,14 @@ package server
 
 type Broadcaster struct {
 	clients map[string]*Client
-	recieve chan string
+	receive chan string
 }
 
 // NewBroadcaster constructs a new Broadcaster.
 func newBroadcaster() *Broadcaster {
 	var b Broadcaster
 	b.clients = make(map[string]*Client)
-	b.recieve = make(chan string)
+	b.receive = make(chan string)
 	return &b
 }
 
@@ -22,7 +22,7 @@ func startBroadcaster() *Broadcaster {
 
 func (b *Broadcaster) broadcast() {
 	for {
-		message := <-b.recieve
+		message := <-b.receive
 		b.sendToAll(message)
 	}
 }

@@ -8,15 +8,15 @@ import (
 
 func TestBroadcastSendReceive(t *testing.T) {
 
-	conn, recieve := goclctest.CreateServerFixture(t)
+	conn, receive := goclctest.CreateServerFixture(t)
 	defer conn.Close()
 
 	testMessage := "Test message"
 	goclctest.SendInputToServer(t, conn, testMessage+"\n")
-	recieve.Scan()
+	receive.Scan()
 
-	if !strings.Contains(recieve.Text(), testMessage) {
-		t.Errorf("broadcast error - want: %s, got: %s", testMessage, recieve.Text())
+	if !strings.Contains(receive.Text(), testMessage) {
+		t.Errorf("broadcast error - want: %s, got: %s", testMessage, receive.Text())
 	}
 
 	goclctest.SendInputToServer(t, conn, "/exit\n")
