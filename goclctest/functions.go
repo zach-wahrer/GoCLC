@@ -11,6 +11,7 @@ import (
 
 const Address = "localhost"
 const Port = "9000"
+const TestUsername = "TestUsername"
 
 func CreateServerFixture(t *testing.T) (net.Conn, bufio.Scanner) {
 	conn := CreateTestConnection(t)
@@ -18,7 +19,7 @@ func CreateServerFixture(t *testing.T) (net.Conn, bufio.Scanner) {
 
 	recieve.Scan() // Server Greeting
 	recieve.Scan() // Ask Username
-	SendInputToServer(t, conn, "TestUsername\n")
+	SendInputToServer(t, conn, TestUsername+"\n")
 	recieve.Scan() // User Greeting
 	return conn, *recieve
 }

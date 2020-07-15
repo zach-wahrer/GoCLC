@@ -2,13 +2,18 @@ package server
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"goclctest"
+	"log"
 	"os"
 	"strings"
 	"testing"
 	"time"
 )
+
+const testMessage = "Test message\n"
+const TestUsername = goclctest.TestUsername
 
 func TestMain(m *testing.M) {
 	go Listen(goclctest.Address, goclctest.Port)
@@ -68,13 +73,33 @@ func TestServerFixture(t *testing.T) {
 		goclctest.UnexpectedServerReplyError(t, askUsername, recieve.Text())
 	}
 
-	goclctest.SendInputToServer(t, conn, "TestUsername\n")
+	goclctest.SendInputToServer(t, conn, TestUsername+"\n")
 	recieve.Scan()
-	want := fmt.Sprintf("%s TestUsername%s", userGreeting, userGreetingPunc)
+	want := fmt.Sprintf("%s %s%s", userGreeting, TestUsername, userGreetingPunc)
 	if recieve.Text()+"\n" != want {
 		goclctest.UnexpectedServerReplyError(t, want, recieve.Text())
 	}
 
 	goclctest.SendInputToServer(t, conn, "/exit\n")
+
+}
+
+func TestServerLogging(t *testing.T) {
+	conn, _ := goclctest.CreateServerFixture(t)
+	defer conn.Close()
+
+	var got bytes.Buffer
+	log.SetOutput(&got)
+	goclctest.SendInputToServer(t, conn, testMessage)
+	goclctest.SendInputToServer(t, conn, "/exit\n")
+	time.Sleep(5 * time.Millisecond)
+	log.SetOutput(os.Stderr)
+
+	if !strings.Contains(got.String(), testMessage) {
+		t.Errorf("server didn't log message - want: %s, got: %s", testMessage, got.String())
+	}
+	if !strings.Contains(got.String(), TestUsername) {
+		t.Errorf("server didn't log username - want %s, got: %s", TestUsername, got.String())
+	}
 
 }

@@ -51,6 +51,7 @@ func chat(client Client) {
 		input := client.Read()
 
 		if exitCommands[input] {
+			logInput(client, input)
 			break
 		}
 
@@ -61,7 +62,12 @@ func chat(client Client) {
 		} else {
 			client.Broadcast(input)
 		}
+		logInput(client, input)
 	}
+}
+
+func logInput(client Client, input string) {
+	log.Printf("%s - %s - %s", client.c.RemoteAddr(), client.name, input)
 }
 
 func logout(client Client) {
