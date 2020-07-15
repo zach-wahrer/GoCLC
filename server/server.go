@@ -65,7 +65,7 @@ func chat(client Client) {
 }
 
 func logInput(client Client, input string) {
-	log.Printf("%s - %s - %s", client.c.RemoteAddr(), client.name, input)
+	log.Printf("%s - %s - %s", client.address, client.name, input)
 }
 
 func logout(client Client) {
