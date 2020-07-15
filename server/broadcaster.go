@@ -23,12 +23,17 @@ func startBroadcaster() *Broadcaster {
 func (b *Broadcaster) broadcast() {
 	for {
 		message := <-b.recieve
-		for _, client := range b.clients {
-			client.Write(message)
-		}
+		b.sendToAll(message)
 	}
 }
 
 func (b *Broadcaster) addClient(client *Client) {
 	b.clients[client.name] = client
+
+}
+
+func (b *Broadcaster) sendToAll(message string) {
+	for _, client := range b.clients {
+		client.Write(message)
+	}
 }

@@ -15,6 +15,8 @@ type Client struct {
 	name    string
 }
 
+// func
+
 func (client Client) Write(input string) {
 	if _, err := io.WriteString(client.c, input); err != nil {
 		log.Print(err)

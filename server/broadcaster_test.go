@@ -1,27 +1,23 @@
 package server
 
 import (
-	"bytes"
-	"log"
-	"os"
+	"goclctest"
 	"strings"
 	"testing"
 )
 
-func TestBroadcastRecieve(t *testing.T) {
-	var got bytes.Buffer
-	log.SetOutput(&got)
+func TestBroadcastSendReceive(t *testing.T) {
 
-	send := make(chan string)
-	recieve := make(chan string)
-	go startBroadcaster(send, recieve)
+	conn, recieve := goclctest.CreateServerFixture(t)
+	defer conn.Close()
 
 	testMessage := "Test message"
-	recieve <- testMessage
+	goclctest.SendInputToServer(t, conn, testMessage+"\n")
+	recieve.Scan()
 
-	log.SetOutput(os.Stderr)
-
-	if !strings.Contains(got.String(), testMessage) {
-		t.Errorf("broadcast error - want: %s, got: %s", testMessage, got.String())
+	if !strings.Contains(recieve.Text(), testMessage) {
+		t.Errorf("broadcast error - want: %s, got: %s", testMessage, recieve.Text())
 	}
+
+	goclctest.SendInputToServer(t, conn, "/exit\n")
 }
