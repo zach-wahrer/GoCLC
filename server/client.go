@@ -9,10 +9,10 @@ import (
 )
 
 type Client struct {
-	c         net.Conn
-	recieve   *bufio.Scanner
-	broadcast chan string
-	name      string
+	c       net.Conn
+	recieve *bufio.Scanner
+	send    chan string
+	name    string
 }
 
 func (client Client) Write(input string) {
@@ -27,5 +27,5 @@ func (client Client) Read() string {
 }
 
 func (client Client) Broadcast(message string) {
-	client.broadcast <- fmt.Sprintf("%s: %s", client.name, message)
+	client.send <- fmt.Sprintf("%s: %s", client.name, message)
 }

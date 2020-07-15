@@ -11,9 +11,7 @@ import (
 // Listen checks for connections on the given address and port and then
 // spawns a goroutine to handle each client separately via helper functions.
 func Listen(address, port string) {
-	send := make(chan string)
-	recieve := make(chan string)
-	go startBroadcaster(send, recieve)
+	broadcaster := startBroadcaster()
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", address, port))
 	if err != nil {
@@ -25,14 +23,15 @@ func Listen(address, port string) {
 			log.Print(err)
 			continue
 		}
-		go handleConn(conn, recieve)
+		go handleConn(conn, broadcaster)
 	}
 }
 
-func handleConn(conn net.Conn, broadcast chan string) {
+func handleConn(conn net.Conn, broadcaster *Broadcaster) {
 	defer conn.Close()
-	var client = Client{c: conn, recieve: bufio.NewScanner(conn), broadcast: broadcast}
+	var client = Client{c: conn, recieve: bufio.NewScanner(conn), send: broadcaster.recieve}
 	login(&client)
+	broadcaster.addClient(&client)
 	chat(client)
 	logout(client)
 }
@@ -60,7 +59,7 @@ func chat(client Client) {
 		} else if input[0] == '/' {
 			client.Write(runCommand(input))
 		} else {
-			client.Broadcast(input)
+			client.Broadcast(input + "\n")
 		}
 		logInput(client, input)
 	}

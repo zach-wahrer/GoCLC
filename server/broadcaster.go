@@ -1,30 +1,34 @@
 package server
 
-import "log"
-
 type Broadcaster struct {
-	clients map[string]Client
-	send    chan string
+	clients map[string]*Client
 	recieve chan string
 }
 
-func startBroadcaster(send, recieve chan string) {
+func startBroadcaster() *Broadcaster {
 	b := newBroadcaster()
-	b.send = send
-	b.recieve = recieve
+	go broadcast(b)
+	return b
 
+}
+
+func broadcast(b *Broadcaster) {
 	for {
-		select {
-		case message := <-b.recieve:
-			log.Print(message)
+		message := <-b.recieve
+		for _, client := range b.clients {
+			client.Write(message)
 		}
 	}
-
 }
 
 // NewBroadcaster constructs a new Broadcaster.
 func newBroadcaster() *Broadcaster {
 	var b Broadcaster
-	b.clients = make(map[string]Client)
+	b.clients = make(map[string]*Client)
+	b.recieve = make(chan string)
 	return &b
+}
+
+func (b *Broadcaster) addClient(client *Client) {
+	b.clients[client.name] = client
 }
