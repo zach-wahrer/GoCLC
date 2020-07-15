@@ -48,18 +48,18 @@ func login(client *Client) {
 
 func chat(client Client) {
 	for {
-		command := client.Read()
+		input := client.Read()
 
-		if exitCommands[command] {
+		if exitCommands[input] {
 			break
 		}
 
-		if command == "" {
+		if input == "" {
 			continue
-		} else if command[0] == '/' {
-			client.Write(runCommand(command))
+		} else if input[0] == '/' {
+			client.Write(runCommand(input))
 		} else {
-			client.Broadcast(command)
+			client.Broadcast(input)
 		}
 	}
 }
