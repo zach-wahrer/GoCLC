@@ -1,6 +1,9 @@
 package server
 
+import "sync"
+
 type Broadcaster struct {
+	mu      sync.Mutex
 	clients map[string]*Client
 	receive chan string
 }
@@ -29,14 +32,18 @@ func (b *Broadcaster) broadcast() {
 
 func (b *Broadcaster) addClient(client *Client) bool {
 	if b.usernameAvailable(client.name) {
+		b.mu.Lock()
 		b.clients[client.name] = client
+		b.mu.Unlock()
 		return true
 	}
 	return false
 }
 
 func (b *Broadcaster) removeClient(client *Client) {
+	b.mu.Lock()
 	delete(b.clients, client.name)
+	b.mu.Unlock()
 }
 
 func (b *Broadcaster) sendToAll(message string) {
