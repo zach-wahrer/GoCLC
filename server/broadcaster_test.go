@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+var errClientNotAdded = errors.New("client not sucessfully added to broadcaster")
+
 func TestBroadcastSendReceive(t *testing.T) {
 
 	conn, receive := goclctest.CreateServerFixture(t)
@@ -27,6 +29,30 @@ func TestClientAddedToBroadcaster(t *testing.T) {
 	b := newBroadcaster()
 	b.addClient(&Client{name: "TestClient"})
 	if _, ok := b.clients["TestClient"]; !ok {
-		goclctest.InternalServerError(t, errors.New("client not sucessfully added to broadcaster"))
+		goclctest.InternalServerError(t, errClientNotAdded)
 	}
+}
+
+func TestClientRemovedFromBroadcaster(t *testing.T) {
+	b := newBroadcaster()
+	client := Client{name: "TestClient"}
+	b.addClient(&client)
+	b.removeClient(&client)
+	if _, ok := b.clients["TestClient"]; ok {
+		goclctest.InternalServerError(t, errors.New("client not removed from broadcaster"))
+	}
+}
+
+func TestAttemptDuplicateUsernameForBroadcaster(t *testing.T) {
+	b := newBroadcaster()
+	if ok := b.addClient(&Client{name: "TestClient"}); !ok {
+		goclctest.InternalServerError(t, errClientNotAdded)
+	}
+	if ok := b.addClient(&Client{name: "AnotherTester"}); !ok {
+		goclctest.InternalServerError(t, errClientNotAdded)
+	}
+	if ok := b.addClient(&Client{name: "TestClient"}); ok {
+		goclctest.InternalServerError(t, errors.New("duplicate client added to broadcaster"))
+	}
+
 }

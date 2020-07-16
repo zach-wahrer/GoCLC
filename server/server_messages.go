@@ -3,6 +3,7 @@ package server
 const serverGreeting = "Welcome to the GoCLC Server!\n"
 
 const askUsername = "Please enter a username:\n"
+const duplicateUsername = "That username is already taken.\n"
 const userGreeting = "Hello,"
 const userGreetingPunc = "!\n"
 

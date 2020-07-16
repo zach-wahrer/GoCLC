@@ -8,6 +8,8 @@ func runCommand(command string) string {
 		return serverGreeting
 	case "/askUsername":
 		return askUsername
+	case "/duplicateUsername":
+		return duplicateUsername
 	case "/goodbye":
 		return serverGoodbye
 	case "/help":

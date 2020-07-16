@@ -29,16 +29,22 @@ func Listen(address, port string) {
 func handleConn(conn net.Conn, broadcaster *Broadcaster) {
 	defer conn.Close()
 	client := NewClient(conn, broadcaster.receive)
-	login(&client)
-	broadcaster.addClient(&client)
+	login(&client, broadcaster)
 	chat(client)
-	logout(client)
+	logout(&client, broadcaster)
 }
 
-func login(client *Client) {
+func login(client *Client, broadcaster *Broadcaster) {
 	client.Write(runCommand("/greet"))
 	client.Write(runCommand("/askUsername"))
 	client.name = client.Read()
+
+	for !broadcaster.addClient(client) {
+		client.Write(runCommand("/duplicateUsername"))
+		client.Write(runCommand("/askUsername"))
+		client.name = client.Read()
+	}
+
 	enrichedUserGreeting := fmt.Sprintf("%s %s%s", userGreeting,
 		client.name, userGreetingPunc)
 	client.Write(enrichedUserGreeting)
@@ -68,6 +74,7 @@ func logInput(client Client, input string) {
 	log.Printf("%s - %s - %s", client.address, client.name, input)
 }
 
-func logout(client Client) {
+func logout(client *Client, broadcaster *Broadcaster) {
 	client.Write(runCommand("/goodbye"))
+	broadcaster.removeClient(client)
 }

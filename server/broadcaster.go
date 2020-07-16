@@ -27,13 +27,25 @@ func (b *Broadcaster) broadcast() {
 	}
 }
 
-func (b *Broadcaster) addClient(client *Client) {
-	b.clients[client.name] = client
+func (b *Broadcaster) addClient(client *Client) bool {
+	if b.usernameAvailable(client.name) {
+		b.clients[client.name] = client
+		return true
+	}
+	return false
+}
 
+func (b *Broadcaster) removeClient(client *Client) {
+	delete(b.clients, client.name)
 }
 
 func (b *Broadcaster) sendToAll(message string) {
 	for _, client := range b.clients {
 		client.Write(message)
 	}
+}
+
+func (b *Broadcaster) usernameAvailable(username string) bool {
+	_, ok := b.clients[username]
+	return !ok
 }
