@@ -30,7 +30,6 @@ func TestBroadcastSendReceive(t *testing.T) {
 func TestUnexpectedDisconnectedClient(t *testing.T) {
 	conn1, _ := goclctest.ReadyTestConnection(t, TestUsername)
 	defer conn1.Close()
-
 	conn2, _ := goclctest.ReadyTestConnection(t, "AnotherTestuser")
 	conn2.Close()
 
