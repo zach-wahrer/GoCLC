@@ -2,13 +2,13 @@ package server
 
 import "sync"
 
+// Broadcaster manages connections with clients and sends messages to them.
 type Broadcaster struct {
 	mu      sync.Mutex
 	clients map[string]*Client
 	receive chan string
 }
 
-// NewBroadcaster constructs a new Broadcaster.
 func newBroadcaster() *Broadcaster {
 	var b Broadcaster
 	b.clients = make(map[string]*Client)
@@ -20,13 +20,18 @@ func startBroadcaster() *Broadcaster {
 	b := newBroadcaster()
 	go b.broadcast()
 	return b
-
 }
 
 func (b *Broadcaster) broadcast() {
 	for {
 		message := <-b.receive
-		b.sendToAll(message)
+		b.sendToAllClients(message)
+	}
+}
+
+func (b *Broadcaster) sendToAllClients(message string) {
+	for _, client := range b.clients {
+		client.Write(message)
 	}
 }
 
@@ -44,12 +49,6 @@ func (b *Broadcaster) removeClient(client *Client) {
 	b.mu.Lock()
 	delete(b.clients, client.name)
 	b.mu.Unlock()
-}
-
-func (b *Broadcaster) sendToAll(message string) {
-	for _, client := range b.clients {
-		client.Write(message)
-	}
 }
 
 func (b *Broadcaster) usernameAvailable(username string) bool {
