@@ -25,10 +25,8 @@ func newClient(conn net.Conn, send chan string) Client {
 		address: conn.RemoteAddr().String()}
 }
 
-func (client Client) write(message string) {
-	if _, err := io.WriteString(client.c, message); err != nil {
-		log.Print(err)
-	}
+func (client Client) broadcast(message string) {
+	client.send <- fmt.Sprintf("%s: %s", client.name, message)
 }
 
 func (client Client) read() string {
@@ -36,6 +34,8 @@ func (client Client) read() string {
 	return client.receive.Text()
 }
 
-func (client Client) broadcast(message string) {
-	client.send <- fmt.Sprintf("%s: %s", client.name, message)
+func (client Client) write(message string) {
+	if _, err := io.WriteString(client.c, message); err != nil {
+		log.Print(err)
+	}
 }
