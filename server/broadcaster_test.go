@@ -11,7 +11,7 @@ var errClientNotAdded = errors.New("client not sucessfully added to broadcaster"
 
 func TestBroadcastSendReceive(t *testing.T) {
 
-	conn, receive := goclctest.CreateServerFixture(t)
+	conn, receive := goclctest.ReadyTestConnection(t)
 	defer conn.Close()
 
 	testMessage := "Test message"

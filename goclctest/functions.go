@@ -13,7 +13,7 @@ const Address = "localhost"
 const Port = "9000"
 const TestUsername = "TestUsername"
 
-func CreateServerFixture(t *testing.T) (net.Conn, bufio.Scanner) {
+func ReadyTestConnection(t *testing.T) (net.Conn, bufio.Scanner) {
 	conn := CreateTestConnection(t)
 	receive := bufio.NewScanner(conn)
 

@@ -23,7 +23,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestConnectionAndServerResponse(t *testing.T) {
-	conn, receive := goclctest.CreateServerFixture(t)
+	conn, receive := goclctest.ReadyTestConnection(t)
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 	receive.Scan()
@@ -34,7 +34,7 @@ func TestConnectionAndServerResponse(t *testing.T) {
 }
 
 func TestServerResponseForHelp(t *testing.T) {
-	conn, receive := goclctest.CreateServerFixture(t)
+	conn, receive := goclctest.ReadyTestConnection(t)
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/help\n")
 
@@ -53,7 +53,7 @@ func TestServerResponseForHelp(t *testing.T) {
 }
 
 func TestServerWithEmptyInput(t *testing.T) {
-	conn, _ := goclctest.CreateServerFixture(t)
+	conn, _ := goclctest.ReadyTestConnection(t)
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "\n")
 	goclctest.SendInputToServer(t, conn, "/exit\n")
@@ -85,7 +85,7 @@ func TestServerFixture(t *testing.T) {
 }
 
 func TestServerLogging(t *testing.T) {
-	conn, _ := goclctest.CreateServerFixture(t)
+	conn, _ := goclctest.ReadyTestConnection(t)
 	defer conn.Close()
 
 	var got bytes.Buffer
