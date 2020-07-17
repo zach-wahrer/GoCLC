@@ -31,7 +31,7 @@ func (b *Broadcaster) broadcast() {
 
 func (b *Broadcaster) sendToAllClients(message string) {
 	for _, client := range b.clients {
-		client.Write(message)
+		client.write(message)
 	}
 }
 

@@ -16,7 +16,7 @@ type Client struct {
 	name    string
 }
 
-func NewClient(conn net.Conn, send chan string) Client {
+func newClient(conn net.Conn, send chan string) Client {
 	client := Client{
 		c:       conn,
 		receive: bufio.NewScanner(conn),
@@ -25,17 +25,17 @@ func NewClient(conn net.Conn, send chan string) Client {
 	return client
 }
 
-func (client Client) Write(input string) {
+func (client Client) write(input string) {
 	if _, err := io.WriteString(client.c, input); err != nil {
 		log.Print(err)
 	}
 }
 
-func (client Client) Read() string {
+func (client Client) read() string {
 	client.receive.Scan()
 	return client.receive.Text()
 }
 
-func (client Client) Broadcast(message string) {
+func (client Client) broadcast(message string) {
 	client.send <- fmt.Sprintf("%s: %s", client.name, message)
 }

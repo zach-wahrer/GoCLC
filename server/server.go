@@ -28,31 +28,31 @@ func Listen(address, port string) {
 
 func handleConn(conn net.Conn, broadcaster *Broadcaster) {
 	defer conn.Close()
-	client := NewClient(conn, broadcaster.receive)
+	client := newClient(conn, broadcaster.receive)
 	login(&client, broadcaster)
 	chat(client)
 	logout(&client, broadcaster)
 }
 
 func login(client *Client, broadcaster *Broadcaster) {
-	client.Write(runCommand("/greet"))
-	client.Write(runCommand("/askUsername"))
-	client.name = client.Read()
+	client.write(runCommand("/greet"))
+	client.write(runCommand("/askUsername"))
+	client.name = client.read()
 
 	for !broadcaster.addClient(client) {
-		client.Write(runCommand("/duplicateUsername"))
-		client.Write(runCommand("/askUsername"))
-		client.name = client.Read()
+		client.write(runCommand("/duplicateUsername"))
+		client.write(runCommand("/askUsername"))
+		client.name = client.read()
 	}
 
 	enrichedUserGreeting := fmt.Sprintf("%s %s%s", userGreeting,
 		client.name, userGreetingPunc)
-	client.Write(enrichedUserGreeting)
+	client.write(enrichedUserGreeting)
 }
 
 func chat(client Client) {
 	for {
-		input := client.Read()
+		input := client.read()
 
 		if exitCommands[input] {
 			logInput(client, input)
@@ -62,9 +62,9 @@ func chat(client Client) {
 		if input == "" {
 			continue
 		} else if input[0] == '/' {
-			client.Write(runCommand(input))
+			client.write(runCommand(input))
 		} else {
-			client.Broadcast(input + "\n")
+			client.broadcast(input + "\n")
 		}
 		logInput(client, input)
 	}
@@ -75,6 +75,6 @@ func logInput(client Client, input string) {
 }
 
 func logout(client *Client, broadcaster *Broadcaster) {
-	client.Write(runCommand("/goodbye"))
+	client.write(runCommand("/goodbye"))
 	broadcaster.removeClient(client)
 }
