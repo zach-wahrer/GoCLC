@@ -10,7 +10,6 @@ import (
 var errClientNotAdded = errors.New("client not sucessfully added to broadcaster")
 
 func TestBroadcastSendReceive(t *testing.T) {
-
 	conn, receive := goclctest.ReadyTestConnection(t)
 	defer conn.Close()
 
@@ -21,7 +20,6 @@ func TestBroadcastSendReceive(t *testing.T) {
 	if !strings.Contains(receive.Text(), testMessage) {
 		t.Errorf("broadcast error - want: %s, got: %s", testMessage, receive.Text())
 	}
-
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 }
 
