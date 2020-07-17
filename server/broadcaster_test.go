@@ -1,16 +1,20 @@
 package server
 
 import (
+	"bytes"
 	"errors"
 	"goclctest"
+	"log"
+	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 var errClientNotAdded = errors.New("client not sucessfully added to broadcaster")
 
 func TestBroadcastSendReceive(t *testing.T) {
-	conn, receive := goclctest.ReadyTestConnection(t)
+	conn, receive := goclctest.ReadyTestConnection(t, TestUsername)
 	defer conn.Close()
 
 	testMessage := "Test message"
@@ -21,6 +25,31 @@ func TestBroadcastSendReceive(t *testing.T) {
 		t.Errorf("broadcast error - want: %s, got: %s", testMessage, receive.Text())
 	}
 	goclctest.SendInputToServer(t, conn, "/exit\n")
+}
+
+func TestUnexpectedDisconnectedClient(t *testing.T) {
+	conn1, _ := goclctest.ReadyTestConnection(t, TestUsername)
+	defer conn1.Close()
+
+	conn2, _ := goclctest.ReadyTestConnection(t, "AnotherTestuser")
+	conn2.Close()
+
+	var got bytes.Buffer
+	log.SetOutput(&got)
+	goclctest.SendInputToServer(t, conn1, "Test message\n")
+	goclctest.SendInputToServer(t, conn1, "Another test message\n")
+	goclctest.SendInputToServer(t, conn1, "/exit\n")
+	time.Sleep(5 * time.Millisecond)
+	log.SetOutput(os.Stderr)
+
+	err := "disconnected unexpectedly"
+	if !strings.Contains(got.String(), err) {
+		t.Errorf("server didn't disconnect user - want: %s, got: %s", err, got.String())
+	}
+	if strings.Contains(got.String(), "write: broken pipe") {
+		t.Errorf("server wrote to broken pipe - want: %s, got: %s", err, got.String())
+	}
+
 }
 
 func TestClientAddedToBroadcaster(t *testing.T) {

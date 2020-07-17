@@ -1,6 +1,8 @@
 package server
 
-import "sync"
+import (
+	"sync"
+)
 
 // Broadcaster manages connections with clients and sends messages to them.
 type Broadcaster struct {
@@ -31,7 +33,9 @@ func (b *Broadcaster) broadcast() {
 
 func (b *Broadcaster) sendToAllClients(message string) {
 	for _, client := range b.clients {
-		client.write(message)
+		if err := client.write(message); err != nil {
+			b.removeClient(client)
+		}
 	}
 }
 

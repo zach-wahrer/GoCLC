@@ -34,8 +34,11 @@ func (client Client) read() string {
 	return client.receive.Text()
 }
 
-func (client Client) write(message string) {
+func (client Client) write(message string) error {
 	if _, err := io.WriteString(client.c, message); err != nil {
+		err := fmt.Errorf("%s disconnected unexpectedly", client.address)
 		log.Print(err)
+		return err
 	}
+	return nil
 }

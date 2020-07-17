@@ -19,13 +19,13 @@ const Port = "9000"
 const TestUsername = "TestUsername"
 
 // ReadyTestConnection creates a test connection to server, then logs in.
-func ReadyTestConnection(t *testing.T) (net.Conn, bufio.Scanner) {
+func ReadyTestConnection(t *testing.T, username string) (net.Conn, bufio.Scanner) {
 	conn := CreateTestConnection(t)
 	receive := bufio.NewScanner(conn)
 
 	receive.Scan() // Server Greeting
 	receive.Scan() // Ask Username
-	SendInputToServer(t, conn, TestUsername+"\n")
+	SendInputToServer(t, conn, username+"\n")
 	receive.Scan() // User Greeting
 	return conn, *receive
 }
