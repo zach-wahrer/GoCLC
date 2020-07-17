@@ -61,20 +61,26 @@ func chat(client Client) {
 
 		if input == "" {
 			continue
-		} else if input[0] == '/' {
-			client.write(runCommand(input))
-		} else {
-			client.broadcast(input + "\n")
 		}
-		logInput(client, input)
-	}
-}
 
-func logInput(client Client, input string) {
-	log.Printf("%s - %s - %s", client.address, client.name, input)
+		handleInput(client, input)
+	}
 }
 
 func logout(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/goodbye"))
 	broadcaster.removeClient(client)
+}
+
+func handleInput(client Client, input string) {
+	if input[0] == '/' {
+		client.write(runCommand(input))
+	} else {
+		client.broadcast(input + "\n")
+	}
+	logInput(client, input)
+}
+
+func logInput(client Client, input string) {
+	log.Printf("%s - %s - %s", client.address, client.name, input)
 }
