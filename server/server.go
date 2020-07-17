@@ -7,8 +7,7 @@ import (
 	"net"
 )
 
-// Listen checks for connections on the given address and port and then
-// spawns a goroutine to handle each client separately via helper functions.
+// Listen checks for chat connections on the given address and port.
 func Listen(address, port string) {
 	broadcaster := startBroadcaster()
 
