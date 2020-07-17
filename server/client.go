@@ -8,6 +8,7 @@ import (
 	"net"
 )
 
+// Client manages all aspects of client connections.
 type Client struct {
 	c       net.Conn
 	receive *bufio.Scanner
@@ -17,16 +18,15 @@ type Client struct {
 }
 
 func newClient(conn net.Conn, send chan string) Client {
-	client := Client{
+	return Client{
 		c:       conn,
 		receive: bufio.NewScanner(conn),
 		send:    send,
 		address: conn.RemoteAddr().String()}
-	return client
 }
 
-func (client Client) write(input string) {
-	if _, err := io.WriteString(client.c, input); err != nil {
+func (client Client) write(message string) {
+	if _, err := io.WriteString(client.c, message); err != nil {
 		log.Print(err)
 	}
 }
