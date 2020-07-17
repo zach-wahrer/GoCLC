@@ -30,7 +30,6 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	if receive.Text()+"\n" != serverGoodbye {
 		goclctest.UnexpectedServerReplyError(t, serverGoodbye, receive.Text())
 	}
-
 }
 
 func TestServerResponseForHelp(t *testing.T) {
@@ -49,7 +48,6 @@ func TestServerResponseForHelp(t *testing.T) {
 	}
 
 	goclctest.SendInputToServer(t, conn, "/exit\n")
-
 }
 
 func TestServerWithEmptyInput(t *testing.T) {
@@ -81,7 +79,6 @@ func TestServerFixture(t *testing.T) {
 	}
 
 	goclctest.SendInputToServer(t, conn, "/exit\n")
-
 }
 
 func TestServerLogging(t *testing.T) {
@@ -100,6 +97,23 @@ func TestServerLogging(t *testing.T) {
 	}
 	if !strings.Contains(got.String(), TestUsername) {
 		t.Errorf("server didn't log username - want %s, got: %s", TestUsername, got.String())
+	}
+}
+
+func TestNoDuplicateUsersAllowed(t *testing.T) {
+	conn1, _ := goclctest.ReadyTestConnection(t, TestUsername)
+	defer conn1.Close()
+	conn2 := goclctest.CreateTestConnection(t)
+	defer conn2.Close()
+	receive := bufio.NewScanner(conn2)
+
+	receive.Scan() // Server Greeting
+	receive.Scan() // Ask Username
+	goclctest.SendInputToServer(t, conn2, TestUsername+"\n")
+	receive.Scan()
+
+	if receive.Text()+"\n" != duplicateUsername {
+		goclctest.UnexpectedServerReplyError(t, duplicateUsername, receive.Text())
 	}
 
 }

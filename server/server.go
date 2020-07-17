@@ -39,7 +39,7 @@ func login(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/askUsername"))
 	client.name = client.read()
 
-	for !broadcaster.addClient(client) {
+	for ok := broadcaster.addClient(client); !ok; ok = broadcaster.addClient(client) {
 		client.write(runCommand("/duplicateUsername"))
 		client.write(runCommand("/askUsername"))
 		client.name = client.read()
