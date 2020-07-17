@@ -35,14 +35,7 @@ func handleConn(conn net.Conn, broadcaster *Broadcaster) {
 
 func login(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/greet"))
-	client.write(runCommand("/askUsername"))
-	client.name = client.read()
-
-	for ok := broadcaster.addClient(client); !ok; ok = broadcaster.addClient(client) {
-		client.write(runCommand("/duplicateUsername"))
-		client.write(runCommand("/askUsername"))
-		client.name = client.read()
-	}
+	getUsername(client, broadcaster)
 
 	enrichedUserGreeting := fmt.Sprintf("%s %s%s", userGreeting,
 		client.name, userGreetingPunc)
@@ -78,6 +71,16 @@ func handleInput(client Client, input string) {
 		client.broadcast(input + "\n")
 	}
 	logInput(client, input)
+}
+
+func getUsername(client *Client, broadcaster *Broadcaster) {
+	client.write(runCommand("/askUsername"))
+	client.name = client.read()
+	for ok := broadcaster.addClient(client); !ok; ok = broadcaster.addClient(client) {
+		client.write(runCommand("/duplicateUsername"))
+		client.write(runCommand("/askUsername"))
+		client.name = client.read()
+	}
 }
 
 func logInput(client Client, input string) {
