@@ -26,7 +26,7 @@ func newClient(conn net.Conn, send chan string) Client {
 }
 
 func (client Client) broadcast(message string) {
-	client.send <- fmt.Sprintf("%s: %s", client.name, message)
+	client.send <- fmt.Sprintf("<%s> %s", client.name, message)
 }
 
 func (client Client) read() string {
