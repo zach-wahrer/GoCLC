@@ -63,6 +63,7 @@ func chat(client Client) {
 func logout(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/goodbye"))
 	broadcaster.removeClient(client)
+	log.Printf("Client logout: %s - %s", client.name, client.address)
 }
 
 func handleInput(client Client, input string) {

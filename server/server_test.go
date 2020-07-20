@@ -100,7 +100,7 @@ func TestServerLoggingClientMessages(t *testing.T) {
 	}
 }
 
-func TestServerLoggingClientEntry(t *testing.T) {
+func TestServerLoggingClientLogin(t *testing.T) {
 	var got bytes.Buffer
 	log.SetOutput(&got)
 
@@ -113,7 +113,25 @@ func TestServerLoggingClientEntry(t *testing.T) {
 	want := fmt.Sprintf("Client login: %s", TestUsername)
 
 	if !strings.Contains(got.String(), want) {
-		t.Errorf("server didn't log new user - want %s, got: %s", want, got.String())
+		t.Errorf("server didn't log user login - want %s, got: %s", want, got.String())
+	}
+}
+
+func TestServerLoggingClientLogout(t *testing.T) {
+	conn, _ := goclctest.ReadyTestConnection(t, TestUsername)
+	defer conn.Close()
+
+	var got bytes.Buffer
+	log.SetOutput(&got)
+
+	goclctest.SendInputToServer(t, conn, "/exit\n")
+	time.Sleep(5 * time.Millisecond)
+	log.SetOutput(os.Stderr)
+
+	want := fmt.Sprintf("Client logout: %s", TestUsername)
+
+	if !strings.Contains(got.String(), want) {
+		t.Errorf("server didn't log user logout- want %s, got: %s", want, got.String())
 	}
 }
 
