@@ -78,6 +78,12 @@ func TestServerFixture(t *testing.T) {
 		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
 	}
 
+	receive.Scan()
+	want = fmt.Sprintf("%s %s", TestUsername, userAnouncement)
+	if receive.Text()+"\n" != want {
+		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
+	}
+
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 }
 
@@ -150,5 +156,4 @@ func TestNoDuplicateUsersAllowed(t *testing.T) {
 	if receive.Text()+"\n" != duplicateUsername {
 		goclctest.UnexpectedServerReplyError(t, duplicateUsername, receive.Text())
 	}
-
 }

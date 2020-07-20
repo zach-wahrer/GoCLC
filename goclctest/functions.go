@@ -27,6 +27,7 @@ func ReadyTestConnection(t *testing.T, username string) (net.Conn, bufio.Scanner
 	receive.Scan() // Ask Username
 	SendInputToServer(t, conn, username+"\n")
 	receive.Scan() // User Greeting
+	receive.Scan() // Arrival Announcement
 	return conn, *receive
 }
 

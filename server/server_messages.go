@@ -6,7 +6,7 @@ const askUsername = "Please enter a username:\n"
 const duplicateUsername = "That username is already taken.\n"
 const userGreeting = "Hello,"
 const userGreetingPunc = "!\n"
-
+const userAnouncement = "has entered the chat.\n"
 const serverGoodbye = "Goodbye!\n"
 
 const helpMessage = "Available Commands:\n" +
