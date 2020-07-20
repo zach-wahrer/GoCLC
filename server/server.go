@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
+
+var prohibitedUsernameCharacters = []string{"<", ">"}
 
 // Listen checks for chat connections on the given address and port.
 func Listen(address, port string) {
@@ -80,14 +83,33 @@ func handleInput(client Client, input string) {
 
 func getUsername(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/askUsername"))
-	client.name = client.read()
-	for ok := broadcaster.addClient(client); !ok; ok = broadcaster.addClient(client) {
-		client.write(runCommand("/duplicateUsername"))
+	username := client.read()
+	err := validateUsername(username, broadcaster)
+	for err != nil {
+		client.write(fmt.Sprintf("%s", err))
 		client.write(runCommand("/askUsername"))
-		client.name = client.read()
+		username = client.read()
 	}
+	client.name = username
+	broadcaster.addClient(client)
 }
 
 func logInput(client Client, input string) {
 	log.Printf("%s - %s - %s", client.address, client.name, input)
+}
+
+func validateUsername(username string, broadcaster *Broadcaster) error {
+	if strings.EqualFold(username, serverTag[1:len(serverTag)-1]) {
+		return fmt.Errorf("Username connot contain: %s", serverTag)
+	}
+
+	for _, char := range prohibitedUsernameCharacters {
+		if strings.Contains(username, char) {
+			return fmt.Errorf("Username connot contain: %s", prohibitedUsernameCharacters)
+		}
+	}
+	if !broadcaster.usernameAvailable(username) {
+		return fmt.Errorf(duplicateUsername)
+	}
+	return nil
 }

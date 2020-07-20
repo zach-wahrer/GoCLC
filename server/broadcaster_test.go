@@ -80,5 +80,4 @@ func TestAttemptDuplicateUsernameForBroadcaster(t *testing.T) {
 	if ok := b.addClient(&Client{name: "TestClient"}); ok {
 		goclctest.InternalServerError(t, errors.New("duplicate client added to broadcaster"))
 	}
-
 }

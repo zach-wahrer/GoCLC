@@ -157,3 +157,17 @@ func TestNoDuplicateUsersAllowed(t *testing.T) {
 		goclctest.UnexpectedServerReplyError(t, duplicateUsername, receive.Text())
 	}
 }
+
+func TestNoProhibitedCharactersInUsername(t *testing.T) {
+	b := newBroadcaster()
+	if err := validateUsername(prohibitedUsernameCharacters[0], b); err == nil {
+		t.Errorf("server allowed prohibitied chars in username")
+	}
+}
+
+func TestNoServerTagInUsername(t *testing.T) {
+	b := newBroadcaster()
+	if err := validateUsername(serverTag[1:len(serverTag)-1], b); err == nil {
+		t.Errorf("server allowed reserved username")
+	}
+}
