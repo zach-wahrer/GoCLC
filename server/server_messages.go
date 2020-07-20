@@ -9,6 +9,7 @@ const userGreeting = "Hello,"
 const userGreetingPunc = "!\n"
 const userAnouncement = "has entered the chat.\n"
 const serverGoodbye = "Goodbye!\n"
+const userDepartedAnnouncement = "has left the chat.\n"
 
 const helpMessage = "Available Commands:\n" +
 	"/greet - show server welcome message\n" +

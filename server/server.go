@@ -69,6 +69,7 @@ func chat(client Client) {
 func logout(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/goodbye"))
 	broadcaster.removeClient(client)
+	broadcaster.sendToAllClients(fmt.Sprintf("%s %s %s", serverTag, client.name, userDepartedAnnouncement))
 	log.Printf("Client logout: %s - %s", client.name, client.address)
 }
 
@@ -89,6 +90,7 @@ func getUsername(client *Client, broadcaster *Broadcaster) {
 		client.write(fmt.Sprintf("%s", err))
 		client.write(runCommand("/askUsername"))
 		username = client.read()
+		err = validateUsername(username, broadcaster)
 	}
 	client.name = username
 	broadcaster.addClient(client)
@@ -100,12 +102,12 @@ func logInput(client Client, input string) {
 
 func validateUsername(username string, broadcaster *Broadcaster) error {
 	if strings.EqualFold(username, serverTag[1:len(serverTag)-1]) {
-		return fmt.Errorf("Username connot contain: %s\n", serverTag)
+		return fmt.Errorf("Username cannot contain: %s\n", serverTag)
 	}
 
 	for _, char := range prohibitedUsernameCharacters {
 		if strings.Contains(username, char) {
-			return fmt.Errorf("Username connot contain: %s\n", prohibitedUsernameCharacters)
+			return fmt.Errorf("Username cannot contain these characters: %s\n", prohibitedUsernameCharacters)
 		}
 	}
 	if !broadcaster.usernameAvailable(username) {
