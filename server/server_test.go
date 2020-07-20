@@ -73,13 +73,13 @@ func TestServerFixture(t *testing.T) {
 
 	goclctest.SendInputToServer(t, conn, TestUsername+"\n")
 	receive.Scan()
-	want := fmt.Sprintf("%s %s%s", userGreeting, TestUsername, userGreetingPunc)
+	want := fmt.Sprintf("%s %s %s%s", serverTag, userGreeting, TestUsername, userGreetingPunc)
 	if receive.Text()+"\n" != want {
 		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
 	}
 
 	receive.Scan()
-	want = fmt.Sprintf("%s %s", TestUsername, userAnouncement)
+	want = fmt.Sprintf("%s %s %s", serverTag, TestUsername, userAnouncement)
 	if receive.Text()+"\n" != want {
 		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
 	}

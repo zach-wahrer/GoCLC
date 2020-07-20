@@ -37,13 +37,13 @@ func login(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/greet"))
 	getUsername(client, broadcaster)
 
-	enrichedUserGreeting := fmt.Sprintf("%s %s%s", userGreeting,
+	enrichedUserGreeting := fmt.Sprintf("%s %s %s%s", serverTag, userGreeting,
 		client.name, userGreetingPunc)
 	client.write(enrichedUserGreeting)
 
 	log.Printf("Client login: %s - %s", client.name, client.address)
 
-	broadcaster.sendToAllClients(fmt.Sprintf("%s %s", client.name, userAnouncement))
+	broadcaster.sendToAllClients(fmt.Sprintf("%s %s %s", serverTag, client.name, userAnouncement))
 }
 
 func chat(client Client) {
