@@ -81,7 +81,7 @@ func TestServerFixture(t *testing.T) {
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 }
 
-func TestServerLogging(t *testing.T) {
+func TestServerLoggingClientMessages(t *testing.T) {
 	conn, _ := goclctest.ReadyTestConnection(t, TestUsername)
 	defer conn.Close()
 
@@ -97,6 +97,23 @@ func TestServerLogging(t *testing.T) {
 	}
 	if !strings.Contains(got.String(), TestUsername) {
 		t.Errorf("server didn't log username - want %s, got: %s", TestUsername, got.String())
+	}
+}
+
+func TestServerLoggingClientEntry(t *testing.T) {
+	var got bytes.Buffer
+	log.SetOutput(&got)
+
+	conn, _ := goclctest.ReadyTestConnection(t, TestUsername)
+	defer conn.Close()
+	goclctest.SendInputToServer(t, conn, "/exit\n")
+	time.Sleep(5 * time.Millisecond)
+	log.SetOutput(os.Stderr)
+
+	want := fmt.Sprintf("Client login: %s", TestUsername)
+
+	if !strings.Contains(got.String(), want) {
+		t.Errorf("server didn't log new user - want %s, got: %s", want, got.String())
 	}
 }
 

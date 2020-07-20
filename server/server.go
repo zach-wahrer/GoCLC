@@ -40,6 +40,7 @@ func login(client *Client, broadcaster *Broadcaster) {
 	enrichedUserGreeting := fmt.Sprintf("%s %s%s", userGreeting,
 		client.name, userGreetingPunc)
 	client.write(enrichedUserGreeting)
+	log.Printf("Client login: %s - %s", client.name, client.address)
 }
 
 func chat(client Client) {
