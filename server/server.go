@@ -100,12 +100,12 @@ func logInput(client Client, input string) {
 
 func validateUsername(username string, broadcaster *Broadcaster) error {
 	if strings.EqualFold(username, serverTag[1:len(serverTag)-1]) {
-		return fmt.Errorf("Username connot contain: %s", serverTag)
+		return fmt.Errorf("Username connot contain: %s\n", serverTag)
 	}
 
 	for _, char := range prohibitedUsernameCharacters {
 		if strings.Contains(username, char) {
-			return fmt.Errorf("Username connot contain: %s", prohibitedUsernameCharacters)
+			return fmt.Errorf("Username connot contain: %s\n", prohibitedUsernameCharacters)
 		}
 	}
 	if !broadcaster.usernameAvailable(username) {
