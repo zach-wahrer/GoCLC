@@ -33,11 +33,18 @@ func TestBasicClientReceive(t *testing.T) {
 }
 
 func TestAdvancedClientReceive(t *testing.T) {
+	out := captureStdout(func() { StartClient(goclctest.Address, goclctest.Port) })
+	if out != server.ServerGreeting+server.AskUsername {
+		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting+server.AskUsername, out)
+	}
+}
+
+func captureStdout(f func()) string {
 	old := os.Stdout
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 
-	go StartClient(goclctest.Address, goclctest.Port)
+	go f()
 	time.Sleep(1 * time.Millisecond)
 	outC := make(chan string)
 
@@ -50,7 +57,5 @@ func TestAdvancedClientReceive(t *testing.T) {
 	w.Close()
 	os.Stdout = old
 	out := <-outC
-	if out != server.ServerGreeting+server.AskUsername {
-		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting+server.AskUsername, out)
-	}
+	return out
 }
