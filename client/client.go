@@ -16,7 +16,6 @@ type client struct {
 }
 
 // Start creates a new client connection and runs client functions
-
 func (c client) Start() {
 	defer c.conn.Close()
 	go c.receive()
