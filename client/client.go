@@ -3,6 +3,7 @@ package client
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"net"
 )
@@ -10,7 +11,10 @@ import (
 func StartClient(address, port string) {
 	conn := connect(address, port)
 	defer conn.Close()
-	go receiver(conn)
+	go receive(conn)
+	for {
+
+	}
 }
 
 func connect(address, port string) net.Conn {
@@ -19,6 +23,13 @@ func connect(address, port string) net.Conn {
 		log.Fatal(err)
 	}
 	return conn
+}
+
+func receive(conn net.Conn) {
+	server := receiver(conn)
+	for server.Scan() {
+		fmt.Println(server.Text())
+	}
 }
 
 func receiver(conn net.Conn) bufio.Scanner {

@@ -1,7 +1,9 @@
 package client
 
 import (
+	"bytes"
 	"goclctest"
+	"io"
 	"os"
 	"server"
 	"testing"
@@ -28,4 +30,27 @@ func TestBasicClientReceive(t *testing.T) {
 		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting, receive.Text())
 	}
 	conn.Close()
+}
+
+func TestAdvancedClientReceive(t *testing.T) {
+	old := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	go StartClient(goclctest.Address, goclctest.Port)
+	time.Sleep(1 * time.Millisecond)
+	outC := make(chan string)
+
+	go func() {
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+		outC <- buf.String()
+	}()
+
+	w.Close()
+	os.Stdout = old
+	out := <-outC
+	if out != server.ServerGreeting+server.AskUsername {
+		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting+server.AskUsername, out)
+	}
 }
