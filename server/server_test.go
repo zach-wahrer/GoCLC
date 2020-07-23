@@ -27,8 +27,8 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 	receive.Scan()
-	if receive.Text()+"\n" != serverGoodbye {
-		goclctest.UnexpectedServerReplyError(t, serverGoodbye, receive.Text())
+	if receive.Text()+"\n" != ServerGoodbye {
+		goclctest.UnexpectedServerReplyError(t, ServerGoodbye, receive.Text())
 	}
 }
 
@@ -37,14 +37,14 @@ func TestServerResponseForHelp(t *testing.T) {
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/help\n")
 
-	helpLines := len(strings.Split(helpMessage, "\n"))
+	helpLines := len(strings.Split(HelpMessage, "\n"))
 	combinedReply := ""
 	for i := 0; i < helpLines-1; i++ {
 		receive.Scan()
 		combinedReply += receive.Text() + "\n"
 	}
-	if combinedReply != helpMessage {
-		goclctest.UnexpectedServerReplyError(t, helpMessage, combinedReply)
+	if combinedReply != HelpMessage {
+		goclctest.UnexpectedServerReplyError(t, HelpMessage, combinedReply)
 	}
 
 	goclctest.SendInputToServer(t, conn, "/exit\n")
@@ -62,24 +62,24 @@ func TestServerFixture(t *testing.T) {
 	receive := bufio.NewScanner(conn)
 
 	receive.Scan()
-	if receive.Text()+"\n" != serverGreeting {
-		goclctest.UnexpectedServerReplyError(t, serverGreeting, receive.Text())
+	if receive.Text()+"\n" != ServerGreeting {
+		goclctest.UnexpectedServerReplyError(t, ServerGreeting, receive.Text())
 	}
 
 	receive.Scan()
-	if receive.Text()+"\n" != askUsername {
-		goclctest.UnexpectedServerReplyError(t, askUsername, receive.Text())
+	if receive.Text()+"\n" != AskUsername {
+		goclctest.UnexpectedServerReplyError(t, AskUsername, receive.Text())
 	}
 
 	goclctest.SendInputToServer(t, conn, TestUsername+"\n")
 	receive.Scan()
-	want := fmt.Sprintf("%s %s %s%s", serverTag, userGreeting, TestUsername, userGreetingPunc)
+	want := fmt.Sprintf("%s %s %s%s", ServerTag, UserGreeting, TestUsername, UserGreetingPunc)
 	if receive.Text()+"\n" != want {
 		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
 	}
 
 	receive.Scan()
-	want = fmt.Sprintf("%s %s %s", serverTag, TestUsername, userAnouncement)
+	want = fmt.Sprintf("%s %s %s", ServerTag, TestUsername, UserAnouncement)
 	if receive.Text()+"\n" != want {
 		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
 	}
@@ -153,8 +153,8 @@ func TestNoDuplicateUsersAllowed(t *testing.T) {
 	goclctest.SendInputToServer(t, conn2, TestUsername+"\n")
 	receive.Scan()
 
-	if receive.Text()+"\n" != duplicateUsername {
-		goclctest.UnexpectedServerReplyError(t, duplicateUsername, receive.Text())
+	if receive.Text()+"\n" != DuplicateUsername {
+		goclctest.UnexpectedServerReplyError(t, DuplicateUsername, receive.Text())
 	}
 }
 
@@ -167,7 +167,7 @@ func TestNoProhibitedCharactersInUsername(t *testing.T) {
 
 func TestNoServerTagInUsername(t *testing.T) {
 	b := newBroadcaster()
-	if err := validateUsername(serverTag[1:len(serverTag)-1], b); err == nil {
+	if err := validateUsername(ServerTag[1:len(ServerTag)-1], b); err == nil {
 		t.Errorf("server allowed reserved username")
 	}
 }

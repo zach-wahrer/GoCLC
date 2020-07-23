@@ -1,19 +1,19 @@
 package server
 
-const serverGreeting = "Welcome to the GoCLC Server!\n"
-const serverTag = "<Server>"
+const ServerGreeting = "Welcome to the GoCLC Server!\n"
+const ServerTag = "<Server>"
 
-const askUsername = "Please enter a username:\n"
-const duplicateUsername = "That username is already taken.\n"
-const userGreeting = "Hello,"
-const userGreetingPunc = "!\n"
-const userAnouncement = "has entered the chat.\n"
-const serverGoodbye = "Goodbye!\n"
-const userDepartedAnnouncement = "has left the chat.\n"
+const AskUsername = "Please enter a username:\n"
+const DuplicateUsername = "That username is already taken.\n"
+const UserGreeting = "Hello,"
+const UserGreetingPunc = "!\n"
+const UserAnouncement = "has entered the chat.\n"
+const ServerGoodbye = "Goodbye!\n"
+const UserDepartedAnnouncement = "has left the chat.\n"
 
-const helpMessage = "Available Commands:\n" +
+const HelpMessage = "Available Commands:\n" +
 	"/greet - show server welcome message\n" +
 	"/exit - leave the chat server\n" +
 	"/help - prints this help message\n"
 
-const unknownCommandError = "unknown command\n"
+const UnknownCommandError = "unknown command\n"

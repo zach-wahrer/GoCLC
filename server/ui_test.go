@@ -6,35 +6,35 @@ import (
 
 func TestCommandGreet(t *testing.T) {
 	got := runCommand("/greet")
-	if got != serverGreeting {
-		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", serverGreeting, got)
+	if got != ServerGreeting {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", ServerGreeting, got)
 	}
 }
 
 func TestCommandAskUsername(t *testing.T) {
-	got := runCommand("/askUsername")
-	if got != askUsername {
-		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", askUsername, got)
+	got := runCommand("/AskUsername")
+	if got != AskUsername {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", AskUsername, got)
 	}
 }
 
 func TestCommandGoodbye(t *testing.T) {
 	got := runCommand("/goodbye")
-	if got != serverGoodbye {
-		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", serverGoodbye, got)
+	if got != ServerGoodbye {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", ServerGoodbye, got)
 	}
 }
 
 func TestCommandHelp(t *testing.T) {
 	got := runCommand("/help")
-	if got != helpMessage {
-		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", helpMessage, got)
+	if got != HelpMessage {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", HelpMessage, got)
 	}
 }
 
 func TestCommandUnknown(t *testing.T) {
 	got := runCommand("/gibberish")
-	if got != unknownCommandError {
-		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", unknownCommandError, got)
+	if got != UnknownCommandError {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", UnknownCommandError, got)
 	}
 }

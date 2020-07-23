@@ -5,16 +5,16 @@ var exitCommands = map[string]bool{"/quit": true, "/exit": true, "/q": true}
 func runCommand(command string) string {
 	switch command {
 	case "/greet":
-		return serverGreeting
-	case "/askUsername":
-		return askUsername
-	case "/duplicateUsername":
-		return duplicateUsername
+		return ServerGreeting
+	case "/AskUsername":
+		return AskUsername
+	case "/DuplicateUsername":
+		return DuplicateUsername
 	case "/goodbye":
-		return serverGoodbye
+		return ServerGoodbye
 	case "/help":
-		return helpMessage
+		return HelpMessage
 	default:
-		return unknownCommandError
+		return UnknownCommandError
 	}
 }

@@ -40,13 +40,13 @@ func login(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/greet"))
 	getUsername(client, broadcaster)
 
-	enrichedUserGreeting := fmt.Sprintf("%s %s %s%s", serverTag, userGreeting,
-		client.name, userGreetingPunc)
+	enrichedUserGreeting := fmt.Sprintf("%s %s %s%s", ServerTag, UserGreeting,
+		client.name, UserGreetingPunc)
 	client.write(enrichedUserGreeting)
 
 	log.Printf("Client login: %s - %s", client.name, client.address)
 
-	broadcaster.sendToAllClients(fmt.Sprintf("%s %s %s", serverTag, client.name, userAnouncement))
+	broadcaster.sendToAllClients(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserAnouncement))
 }
 
 func chat(client Client) {
@@ -69,7 +69,7 @@ func chat(client Client) {
 func logout(client *Client, broadcaster *Broadcaster) {
 	client.write(runCommand("/goodbye"))
 	broadcaster.removeClient(client)
-	broadcaster.sendToAllClients(fmt.Sprintf("%s %s %s", serverTag, client.name, userDepartedAnnouncement))
+	broadcaster.sendToAllClients(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserDepartedAnnouncement))
 	log.Printf("Client logout: %s - %s", client.name, client.address)
 }
 
@@ -83,12 +83,12 @@ func handleInput(client Client, input string) {
 }
 
 func getUsername(client *Client, broadcaster *Broadcaster) {
-	client.write(runCommand("/askUsername"))
+	client.write(runCommand("/AskUsername"))
 	username := client.read()
 	err := validateUsername(username, broadcaster)
 	for err != nil {
 		client.write(fmt.Sprintf("%s", err))
-		client.write(runCommand("/askUsername"))
+		client.write(runCommand("/AskUsername"))
 		username = client.read()
 		err = validateUsername(username, broadcaster)
 	}
@@ -101,8 +101,8 @@ func logInput(client Client, input string) {
 }
 
 func validateUsername(username string, broadcaster *Broadcaster) error {
-	if strings.EqualFold(username, serverTag[1:len(serverTag)-1]) {
-		return fmt.Errorf("Username cannot contain: %s\n", serverTag)
+	if strings.EqualFold(username, ServerTag[1:len(ServerTag)-1]) {
+		return fmt.Errorf("Username cannot contain: %s\n", ServerTag)
 	}
 
 	for _, char := range prohibitedUsernameCharacters {
@@ -111,7 +111,7 @@ func validateUsername(username string, broadcaster *Broadcaster) error {
 		}
 	}
 	if !broadcaster.usernameAvailable(username) {
-		return fmt.Errorf(duplicateUsername)
+		return fmt.Errorf(DuplicateUsername)
 	}
 	return nil
 }
