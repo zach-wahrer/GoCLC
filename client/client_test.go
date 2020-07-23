@@ -36,10 +36,22 @@ func TestBasicClientReceive(t *testing.T) {
 
 func TestAdvancedClientReceive(t *testing.T) {
 	out := captureStdout(func() {
-		Start(goclctest.Address, goclctest.Port)
+		c := NewClient(goclctest.Address, goclctest.Port)
+		c.Start()
 	})
 	if !strings.Contains(out, server.ServerGreeting+server.AskUsername) {
 		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting+server.AskUsername, out)
+	}
+}
+
+func TestClientSend(t *testing.T) {
+	out := captureStdout(func() {
+		c := NewClient(goclctest.Address, goclctest.Port)
+		c.reader = bytes.NewBufferString(goclctest.TestUsername + "\n" + "/exit")
+		go c.Start()
+	})
+	if !strings.Contains(out, server.UserGreeting) {
+		t.Errorf("client received unexpected reply - want: %s, got: %s", server.UserGreeting+" "+goclctest.TestUsername, out)
 	}
 }
 
