@@ -11,17 +11,17 @@ import (
 )
 
 type client struct {
-	conn   net.Conn
-	reader io.Reader
+	remote net.Conn
+	input  io.Reader
 }
 
 // Start creates a new client connection and runs client functions
 func (c client) Start() {
-	defer c.conn.Close()
+	defer c.remote.Close()
 	go c.receive()
 
 	for {
-		if _, err := io.Copy(c.conn, c.reader); err != nil {
+		if _, err := io.Copy(c.remote, c.input); err != nil {
 			log.Print(err)
 		}
 	}
@@ -32,14 +32,14 @@ func NewClient(address, port string) *client {
 }
 
 func (c client) receive() {
-	server := bufio.NewScanner(c.conn)
+	server := bufio.NewScanner(c.remote)
 	for server.Scan() {
 		fmt.Println(server.Text())
 	}
 }
 
 func (c client) send(message string) {
-	if _, err := io.WriteString(c.conn, message); err != nil {
+	if _, err := io.WriteString(c.remote, message); err != nil {
 		log.Print(err)
 	}
 }

@@ -47,7 +47,7 @@ func TestAdvancedClientReceive(t *testing.T) {
 func TestClientSend(t *testing.T) {
 	out := captureStdout(func() {
 		c := NewClient(goclctest.Address, goclctest.Port)
-		c.reader = bytes.NewBufferString(goclctest.TestUsername + "\n" + "/exit")
+		c.input = bytes.NewBufferString(goclctest.TestUsername + "\n" + "/exit")
 		go c.Start()
 	})
 	if !strings.Contains(out, server.UserGreeting) {
