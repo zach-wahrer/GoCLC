@@ -1,7 +1,6 @@
 package client
 
 import (
-	"bufio"
 	"goclctest"
 	"os"
 	"server"
@@ -17,11 +16,16 @@ func TestMain(m *testing.M) {
 }
 
 func TestBasicClientConnection(t *testing.T) {
-	client := connect(goclctest.Address, goclctest.Port)
-	recieve := bufio.NewScanner(client)
-	recieve.Scan()
-	if recieve.Text()+"\n" != server.ServerGreeting {
-		t.Errorf("client recieved unexpected reply - want: %s, got: %s", server.ServerGreeting, recieve.Text())
+	conn := connect(goclctest.Address, goclctest.Port)
+	conn.Close()
+}
+
+func TestBasicClientReceive(t *testing.T) {
+	conn := connect(goclctest.Address, goclctest.Port)
+	receive := receiver(conn)
+	receive.Scan()
+	if receive.Text()+"\n" != server.ServerGreeting {
+		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting, receive.Text())
 	}
-	client.Close()
+	conn.Close()
 }
