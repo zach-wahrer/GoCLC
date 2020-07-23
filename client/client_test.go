@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"server"
+	"strings"
 	"testing"
 	"time"
 )
@@ -33,8 +34,10 @@ func TestBasicClientReceive(t *testing.T) {
 }
 
 func TestAdvancedClientReceive(t *testing.T) {
-	out := captureStdout(func() { StartClient(goclctest.Address, goclctest.Port) })
-	if out != server.ServerGreeting+server.AskUsername {
+	out := captureStdout(func() {
+		go StartClient(goclctest.Address, goclctest.Port)
+	})
+	if !strings.Contains(out, server.ServerGreeting+server.AskUsername) {
 		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting+server.AskUsername, out)
 	}
 }
@@ -45,7 +48,7 @@ func captureStdout(f func()) string {
 	os.Stdout = w
 
 	go f()
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(5 * time.Millisecond)
 	outC := make(chan string)
 
 	go func() {
