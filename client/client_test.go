@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestBasicClientConnection(t *testing.T) {
-	client := Connect(goclctest.Address, goclctest.Port)
+	client := connect(goclctest.Address, goclctest.Port)
 	recieve := bufio.NewScanner(client)
 	recieve.Scan()
 	if recieve.Text()+"\n" != server.ServerGreeting {
