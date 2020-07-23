@@ -8,13 +8,28 @@ import (
 	"net"
 )
 
-func StartClient(address, port string) {
-	conn := connect(address, port)
-	defer conn.Close()
-	go receive(conn)
+type client struct {
+	conn net.Conn
+}
+
+// Start creates a new client connection and runs client functions
+func Start(address, port string) {
+	c := newClient(address, port)
+	go c.receive()
 	for {
 
 	}
+}
+
+func (c client) receive() {
+	server := bufio.NewScanner(c.conn)
+	for server.Scan() {
+		fmt.Println(server.Text())
+	}
+}
+
+func newClient(address, port string) *client {
+	return &client{connect(address, port)}
 }
 
 func connect(address, port string) net.Conn {
@@ -23,15 +38,4 @@ func connect(address, port string) net.Conn {
 		log.Fatal(err)
 	}
 	return conn
-}
-
-func receive(conn net.Conn) {
-	server := receiver(conn)
-	for server.Scan() {
-		fmt.Println(server.Text())
-	}
-}
-
-func receiver(conn net.Conn) bufio.Scanner {
-	return *bufio.NewScanner(conn)
 }
