@@ -27,8 +27,8 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 	receive.Scan()
-	if receive.Text()+"\n" != ServerGoodbye {
-		goclctest.UnexpectedServerReplyError(t, ServerGoodbye, receive.Text())
+	if receive.Text()+"\n" != ServerTag+" "+ServerGoodbye {
+		goclctest.UnexpectedServerReplyError(t, ServerTag+" "+ServerGoodbye, receive.Text())
 	}
 }
 
