@@ -27,7 +27,7 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 	receive.Scan()
-	if receive.Text()+"\n" != ServerTag+" "+ServerGoodbye {
+	if !strings.Contains(receive.Text()+"\n", ServerTag+" "+ServerGoodbye) {
 		goclctest.UnexpectedServerReplyError(t, ServerTag+" "+ServerGoodbye, receive.Text())
 	}
 }
@@ -43,7 +43,7 @@ func TestServerResponseForHelp(t *testing.T) {
 		receive.Scan()
 		combinedReply += receive.Text() + "\n"
 	}
-	if combinedReply != HelpMessage {
+	if !strings.Contains(combinedReply, HelpMessage) {
 		goclctest.UnexpectedServerReplyError(t, HelpMessage, combinedReply)
 	}
 
@@ -62,25 +62,25 @@ func TestServerFixture(t *testing.T) {
 	receive := bufio.NewScanner(conn)
 
 	receive.Scan()
-	if receive.Text()+"\n" != ServerGreeting {
+	if !strings.Contains(receive.Text()+"\n", ServerGreeting) {
 		goclctest.UnexpectedServerReplyError(t, ServerGreeting, receive.Text())
 	}
 
 	receive.Scan()
-	if receive.Text()+"\n" != AskUsername {
+	if !strings.Contains(receive.Text()+"\n", AskUsername) {
 		goclctest.UnexpectedServerReplyError(t, AskUsername, receive.Text())
 	}
 
 	goclctest.SendInputToServer(t, conn, TestUsername+"\n")
 	receive.Scan()
 	want := fmt.Sprintf("%s %s %s%s", ServerTag, UserGreeting, TestUsername, UserGreetingPunc)
-	if receive.Text()+"\n" != want {
+	if !strings.Contains(receive.Text()+"\n", want) {
 		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
 	}
 
 	receive.Scan()
 	want = fmt.Sprintf("%s %s %s", ServerTag, TestUsername, UserAnouncement)
-	if receive.Text()+"\n" != want {
+	if !strings.Contains(receive.Text()+"\n", want) {
 		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
 	}
 
@@ -153,7 +153,7 @@ func TestNoDuplicateUsersAllowed(t *testing.T) {
 	goclctest.SendInputToServer(t, conn2, TestUsername+"\n")
 	receive.Scan()
 
-	if receive.Text()+"\n" != DuplicateUsername {
+	if !strings.Contains(receive.Text()+"\n", DuplicateUsername) {
 		goclctest.UnexpectedServerReplyError(t, DuplicateUsername, receive.Text())
 	}
 }
