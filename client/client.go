@@ -19,16 +19,20 @@ type client struct {
 func (c client) Start() {
 	defer c.remote.Close()
 	go c.receive()
+	c.chat()
 
+}
+
+func NewClient(address, port string) *client {
+	return &client{connect(address, port), os.Stdin}
+}
+
+func (c client) chat() {
 	for {
 		if _, err := io.Copy(c.remote, c.input); err != nil {
 			log.Print(err)
 		}
 	}
-}
-
-func NewClient(address, port string) *client {
-	return &client{connect(address, port), os.Stdin}
 }
 
 func (c client) receive() {
