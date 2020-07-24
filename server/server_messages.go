@@ -1,7 +1,8 @@
 package server
 
-const ServerGreeting = "Welcome to the GoCLC Server!\n"
+const ServerColor = "\033[96m"
 const ServerTag = "<Server>"
+const ServerGreeting = "Welcome to the GoCLC Server!\n"
 
 const AskUsername = "Please enter a username:\n"
 const DuplicateUsername = "That username is already taken.\n"

@@ -44,21 +44,35 @@ func (b *Broadcaster) sendToAll(message string) {
 	}
 }
 
+func (b *Broadcaster) welcomeClient(client *Client) {
+	b.sendToOne(client, colorizeServerMessage(runCommand("/greet")))
+}
+
+func (b *Broadcaster) askUsername(client *Client) {
+	b.sendToOne(client, colorizeServerMessage(runCommand("/AskUsername")))
+}
+
+func (b *Broadcaster) sendError(client *Client, err error) {
+	b.sendToOne(client, wrapServerMessage(fmt.Sprintf("%s", err)))
+}
+
 func (b *Broadcaster) greetUserByName(client *Client) {
-	b.sendToOne(client, fmt.Sprintf("%s %s %s%s", ServerTag, UserGreeting,
-		client.name, UserGreetingPunc))
+	message := fmt.Sprintf("%s %s%s", UserGreeting, client.name, UserGreetingPunc)
+	b.sendToOne(client, wrapServerMessage(message))
 }
 
 func (b *Broadcaster) announceNewClient(client *Client) {
-	b.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserAnouncement))
+	message := fmt.Sprintf("%s %s", client.name, UserAnouncement)
+	b.sendToAll(wrapServerMessage(message))
 }
 
 func (b *Broadcaster) announceDepartedClient(client *Client) {
-	b.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserDepartedAnnouncement))
+	message := fmt.Sprintf("%s %s %s", ServerTag, client.name, UserDepartedAnnouncement)
+	b.sendToAll(wrapServerMessage(message))
 }
 
 func (b *Broadcaster) sayGoodbye(client *Client) {
-	b.sendToOne(client, ServerTag+" "+runCommand("/goodbye"))
+	b.sendToOne(client, runCommand("/goodbye"))
 }
 
 func (b *Broadcaster) addClient(client *Client) bool {
@@ -80,4 +94,16 @@ func (b *Broadcaster) removeClient(client *Client) {
 func (b *Broadcaster) usernameAvailable(username string) bool {
 	_, ok := b.clients[username]
 	return !ok
+}
+
+func wrapServerMessage(message string) string {
+	return colorizeServerMessage(tagServerMessage(message))
+}
+
+func colorizeServerMessage(message string) string {
+	return fmt.Sprintf("%s%s%s", ServerColor, message, colorReset)
+}
+
+func tagServerMessage(message string) string {
+	return fmt.Sprintf("%s %s", ServerTag, message)
 }

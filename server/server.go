@@ -37,7 +37,7 @@ func handleConn(conn net.Conn, broadcaster *Broadcaster) {
 }
 
 func login(client *Client, broadcaster *Broadcaster) {
-	broadcaster.sendToOne(client, runCommand("/greet"))
+	broadcaster.welcomeClient(client)
 	getUsername(client, broadcaster)
 	broadcaster.greetUserByName(client)
 	broadcaster.announceNewClient(client)
@@ -78,12 +78,12 @@ func handleInput(client Client, input string) {
 }
 
 func getUsername(client *Client, broadcaster *Broadcaster) {
-	client.write(runCommand("/AskUsername"))
+	broadcaster.askUsername(client)
 	username := client.read()
 	err := validateUsername(username, broadcaster)
 	for err != nil {
-		client.write(fmt.Sprintf("%s", err))
-		client.write(runCommand("/AskUsername"))
+		broadcaster.sendError(client, err)
+		broadcaster.askUsername(client)
 		username = client.read()
 		err = validateUsername(username, broadcaster)
 	}

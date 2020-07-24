@@ -15,6 +15,7 @@ type Client struct {
 	send    chan string
 	address string
 	name    string
+	color   string
 }
 
 func newClient(conn net.Conn, send chan string) Client {
@@ -22,11 +23,14 @@ func newClient(conn net.Conn, send chan string) Client {
 		c:       conn,
 		receive: bufio.NewScanner(conn),
 		send:    send,
-		address: conn.RemoteAddr().String()}
+		address: conn.RemoteAddr().String(),
+		color:   randomColor()}
+
 }
 
 func (client Client) broadcast(message string) {
-	client.send <- fmt.Sprintf("<%s> %s", client.name, message)
+
+	client.send <- client.wrapMessage(message)
 }
 
 func (client Client) read() string {
@@ -41,4 +45,8 @@ func (client Client) write(message string) error {
 		return err
 	}
 	return nil
+}
+
+func (client Client) wrapMessage(message string) string {
+	return fmt.Sprintf("%s<%s> %s%s", client.color, client.name, message, colorReset)
 }
