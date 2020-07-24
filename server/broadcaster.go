@@ -53,6 +53,10 @@ func (b *Broadcaster) announceNewClient(client *Client) {
 	b.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserAnouncement))
 }
 
+func (b *Broadcaster) announceDepartedClient(client *Client) {
+	b.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserDepartedAnnouncement))
+}
+
 func (b *Broadcaster) sayGoodbye(client *Client) {
 	b.sendToOne(client, ServerTag+" "+runCommand("/goodbye"))
 }
