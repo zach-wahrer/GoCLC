@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -27,16 +28,24 @@ func startBroadcaster() *Broadcaster {
 func (b *Broadcaster) broadcast() {
 	for {
 		message := <-b.receive
-		b.sendToAllClients(message)
+		b.sendToAll(message)
 	}
 }
 
-func (b *Broadcaster) sendToAllClients(message string) {
+func (b *Broadcaster) sendToOne(client *Client, message string) {
+	client.write(message)
+}
+
+func (b *Broadcaster) sendToAll(message string) {
 	for _, client := range b.clients {
 		if err := client.write(message); err != nil {
 			b.removeClient(client)
 		}
 	}
+}
+
+func (b *Broadcaster) announceNewClient(client *Client) {
+	b.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserAnouncement))
 }
 
 func (b *Broadcaster) addClient(client *Client) bool {

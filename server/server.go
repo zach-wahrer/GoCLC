@@ -37,7 +37,7 @@ func handleConn(conn net.Conn, broadcaster *Broadcaster) {
 }
 
 func login(client *Client, broadcaster *Broadcaster) {
-	client.write(runCommand("/greet"))
+	broadcaster.sendToOne(client, runCommand("/greet"))
 	getUsername(client, broadcaster)
 
 	enrichedUserGreeting := fmt.Sprintf("%s %s %s%s", ServerTag, UserGreeting,
@@ -46,7 +46,7 @@ func login(client *Client, broadcaster *Broadcaster) {
 
 	log.Printf("Client login: %s - %s", client.name, client.address)
 
-	broadcaster.sendToAllClients(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserAnouncement))
+	broadcaster.announceNewClient(client)
 }
 
 func chat(client Client) {
@@ -69,7 +69,7 @@ func chat(client Client) {
 func logout(client *Client, broadcaster *Broadcaster) {
 	client.write(ServerTag + " " + runCommand("/goodbye"))
 	broadcaster.removeClient(client)
-	broadcaster.sendToAllClients(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserDepartedAnnouncement))
+	broadcaster.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserDepartedAnnouncement))
 	log.Printf("Client logout: %s - %s", client.name, client.address)
 }
 
