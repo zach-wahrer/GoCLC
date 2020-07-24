@@ -64,7 +64,7 @@ func chat(client Client) {
 }
 
 func logout(client *Client, broadcaster *Broadcaster) {
-	client.write(ServerTag + " " + runCommand("/goodbye"))
+	broadcaster.sayGoodbye(client)
 	broadcaster.removeClient(client)
 	broadcaster.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserDepartedAnnouncement))
 	log.Printf("Client logout: %s - %s", client.name, client.address)
