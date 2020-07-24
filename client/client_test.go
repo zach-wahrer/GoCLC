@@ -28,7 +28,7 @@ func TestBasicClientReceive(t *testing.T) {
 	conn := connect(goclctest.Address, goclctest.Port)
 	receive := bufio.NewScanner(conn)
 	receive.Scan()
-	if receive.Text()+"\n" != server.ServerGreeting {
+	if !strings.Contains(receive.Text()+"\n", server.ServerGreeting) {
 		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting, receive.Text())
 	}
 	conn.Close()
@@ -39,8 +39,11 @@ func TestAdvancedClientReceive(t *testing.T) {
 		c := NewClient(goclctest.Address, goclctest.Port)
 		c.Start()
 	})
-	if !strings.Contains(out, server.ServerGreeting+server.AskUsername) {
-		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting+server.AskUsername, out)
+	if !strings.Contains(out, server.ServerGreeting) {
+		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting, out)
+	}
+	if !strings.Contains(out, server.AskUsername) {
+		t.Errorf("client received unexpected reply - want: %s, got: %s", server.AskUsername, out)
 	}
 }
 
