@@ -53,7 +53,7 @@ func chat(client Client) {
 	for {
 		input := client.read()
 
-		if exitCommands[input] {
+		if ExitCommands[input] {
 			logInput(client, input)
 			break
 		}

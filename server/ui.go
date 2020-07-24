@@ -1,6 +1,6 @@
 package server
 
-var exitCommands = map[string]bool{"/quit": true, "/exit": true, "/q": true}
+var ExitCommands = map[string]bool{"/quit": true, "/exit": true, "/q": true}
 
 func runCommand(command string) string {
 	switch command {

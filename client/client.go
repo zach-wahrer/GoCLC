@@ -8,6 +8,9 @@ import (
 	"log"
 	"net"
 	"os"
+	"server"
+	"strings"
+	"time"
 )
 
 type client struct {
@@ -20,7 +23,7 @@ func (c client) Start() {
 	defer c.remote.Close()
 	go c.receive()
 	c.chat()
-
+	os.Exit(0)
 }
 
 func NewClient(address, port string) *client {
@@ -28,9 +31,15 @@ func NewClient(address, port string) *client {
 }
 
 func (c client) chat() {
+	reader := bufio.NewReader(c.input)
 	for {
-		if _, err := io.Copy(c.remote, c.input); err != nil {
+		input, _ := reader.ReadString('\n')
+		if _, err := io.WriteString(c.remote, input); err != nil {
 			log.Print(err)
+		}
+		if server.ExitCommands[strings.TrimSuffix(input, "\n")] {
+			time.Sleep(5 * time.Millisecond)
+			break
 		}
 	}
 }
