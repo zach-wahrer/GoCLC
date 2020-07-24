@@ -18,7 +18,7 @@ type client struct {
 	input  io.Reader
 }
 
-// Start creates a new client connection and runs client functions
+// Start manages the lifecycle of a client.
 func (c client) Start() {
 	defer c.remote.Close()
 	go c.receive()
