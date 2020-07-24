@@ -44,6 +44,11 @@ func (b *Broadcaster) sendToAll(message string) {
 	}
 }
 
+func (b *Broadcaster) greetUserByName(client *Client) {
+	b.sendToOne(client, fmt.Sprintf("%s %s %s%s", ServerTag, UserGreeting,
+		client.name, UserGreetingPunc))
+}
+
 func (b *Broadcaster) announceNewClient(client *Client) {
 	b.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserAnouncement))
 }

@@ -39,10 +39,7 @@ func handleConn(conn net.Conn, broadcaster *Broadcaster) {
 func login(client *Client, broadcaster *Broadcaster) {
 	broadcaster.sendToOne(client, runCommand("/greet"))
 	getUsername(client, broadcaster)
-
-	enrichedUserGreeting := fmt.Sprintf("%s %s %s%s", ServerTag, UserGreeting,
-		client.name, UserGreetingPunc)
-	client.write(enrichedUserGreeting)
+	broadcaster.greetUserByName(client)
 
 	log.Printf("Client login: %s - %s", client.name, client.address)
 
