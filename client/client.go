@@ -34,10 +34,8 @@ func (c client) chat() {
 	reader := bufio.NewReader(c.input)
 	for {
 		input, _ := reader.ReadString('\n')
-		if _, err := io.WriteString(c.remote, input); err != nil {
-			log.Print(err)
-		}
-		if server.ExitCommands[strings.TrimSuffix(input, "\n")] {
+		c.send(input)
+		if c.leaveChat(input) {
 			time.Sleep(5 * time.Millisecond)
 			break
 		}
@@ -55,6 +53,10 @@ func (c client) send(message string) {
 	if _, err := io.WriteString(c.remote, message); err != nil {
 		log.Print(err)
 	}
+}
+
+func (c client) leaveChat(input string) bool {
+	return server.ExitCommands[strings.TrimSuffix(input, "\n")]
 }
 
 func connect(address, port string) net.Conn {
