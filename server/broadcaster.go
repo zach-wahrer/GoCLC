@@ -72,7 +72,7 @@ func (b *Broadcaster) announceDepartedClient(client *Client) {
 }
 
 func (b *Broadcaster) sayGoodbye(client *Client) {
-	b.sendToOne(client, runCommand("/goodbye"))
+	b.sendToOne(client, wrapServerMessage(runCommand("/goodbye")))
 }
 
 func (b *Broadcaster) addClient(client *Client) bool {
