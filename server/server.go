@@ -40,10 +40,8 @@ func login(client *Client, broadcaster *Broadcaster) {
 	broadcaster.sendToOne(client, runCommand("/greet"))
 	getUsername(client, broadcaster)
 	broadcaster.greetUserByName(client)
-
-	log.Printf("Client login: %s - %s", client.name, client.address)
-
 	broadcaster.announceNewClient(client)
+	logArrival(client)
 }
 
 func chat(client Client) {
@@ -66,8 +64,8 @@ func chat(client Client) {
 func logout(client *Client, broadcaster *Broadcaster) {
 	broadcaster.sayGoodbye(client)
 	broadcaster.removeClient(client)
-	broadcaster.sendToAll(fmt.Sprintf("%s %s %s", ServerTag, client.name, UserDepartedAnnouncement))
-	log.Printf("Client logout: %s - %s", client.name, client.address)
+	broadcaster.announceDepartedClient(client)
+	logDepature(client)
 }
 
 func handleInput(client Client, input string) {
@@ -93,10 +91,6 @@ func getUsername(client *Client, broadcaster *Broadcaster) {
 	broadcaster.addClient(client)
 }
 
-func logInput(client Client, input string) {
-	log.Printf("%s - %s - %s", client.address, client.name, input)
-}
-
 func validateUsername(username string, broadcaster *Broadcaster) error {
 	if strings.EqualFold(username, ServerTag[1:len(ServerTag)-1]) {
 		return fmt.Errorf("Username cannot contain: %s\n", ServerTag)
@@ -111,4 +105,16 @@ func validateUsername(username string, broadcaster *Broadcaster) error {
 		return fmt.Errorf(DuplicateUsername)
 	}
 	return nil
+}
+
+func logInput(client Client, input string) {
+	log.Printf("%s - %s - %s", client.address, client.name, input)
+}
+
+func logArrival(client *Client) {
+	log.Printf("Client login: %s - %s", client.name, client.address)
+}
+
+func logDepature(client *Client) {
+	log.Printf("Client logout: %s - %s", client.name, client.address)
 }
