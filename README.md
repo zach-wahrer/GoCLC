@@ -17,6 +17,7 @@ From the root of the project:
 
 ## Implemented Features
 * General chat
+* Colored tags for users
 * Comprehensive server logs
 
 ## Planned Features
