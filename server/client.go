@@ -48,5 +48,5 @@ func (client Client) write(message string) error {
 }
 
 func (client Client) wrapMessage(message string) string {
-	return fmt.Sprintf("%s<%s> %s%s", client.color, client.name, message, colorReset)
+	return fmt.Sprintf("%s<%s> %s%s", client.color, client.name, colorReset, message)
 }

@@ -27,8 +27,11 @@ func TestConnectionAndServerResponse(t *testing.T) {
 	defer conn.Close()
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 	receive.Scan()
-	if !strings.Contains(receive.Text()+"\n", ServerTag+" "+ServerGoodbye) {
-		goclctest.UnexpectedServerReplyError(t, ServerTag+" "+ServerGoodbye, receive.Text())
+	if !strings.Contains(receive.Text()+"\n", ServerTag) {
+		goclctest.UnexpectedServerReplyError(t, ServerTag, receive.Text())
+	}
+	if !strings.Contains(receive.Text()+"\n", ServerGoodbye) {
+		goclctest.UnexpectedServerReplyError(t, ServerGoodbye, receive.Text())
 	}
 }
 
@@ -73,15 +76,19 @@ func TestServerFixture(t *testing.T) {
 
 	goclctest.SendInputToServer(t, conn, TestUsername+"\n")
 	receive.Scan()
-	want := fmt.Sprintf("%s %s %s%s", ServerTag, UserGreeting, TestUsername, UserGreetingPunc)
-	if !strings.Contains(receive.Text()+"\n", want) {
-		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
+	wants := []string{ServerTag, UserGreeting, TestUsername, UserGreetingPunc}
+	for _, want := range wants {
+		if !strings.Contains(receive.Text()+"\n", want) {
+			goclctest.UnexpectedServerReplyError(t, want, receive.Text())
+		}
 	}
 
 	receive.Scan()
-	want = fmt.Sprintf("%s %s %s", ServerTag, TestUsername, UserAnouncement)
-	if !strings.Contains(receive.Text()+"\n", want) {
-		goclctest.UnexpectedServerReplyError(t, want, receive.Text())
+	wants = []string{ServerTag, TestUsername, UserAnouncement}
+	for _, want := range wants {
+		if !strings.Contains(receive.Text()+"\n", want) {
+			goclctest.UnexpectedServerReplyError(t, want, receive.Text())
+		}
 	}
 
 	goclctest.SendInputToServer(t, conn, "/exit\n")

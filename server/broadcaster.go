@@ -45,11 +45,11 @@ func (b *Broadcaster) sendToAll(message string) {
 }
 
 func (b *Broadcaster) welcomeClient(client *Client) {
-	b.sendToOne(client, colorizeServerMessage(runCommand("/greet")))
+	b.sendToOne(client, runCommand("/greet"))
 }
 
 func (b *Broadcaster) askUsername(client *Client) {
-	b.sendToOne(client, colorizeServerMessage(runCommand("/AskUsername")))
+	b.sendToOne(client, runCommand("/AskUsername"))
 }
 
 func (b *Broadcaster) sendError(client *Client, err error) {
@@ -97,13 +97,5 @@ func (b *Broadcaster) usernameAvailable(username string) bool {
 }
 
 func wrapServerMessage(message string) string {
-	return colorizeServerMessage(tagServerMessage(message))
-}
-
-func colorizeServerMessage(message string) string {
-	return fmt.Sprintf("%s%s%s", ServerColor, message, colorReset)
-}
-
-func tagServerMessage(message string) string {
-	return fmt.Sprintf("%s %s", ServerTag, message)
+	return fmt.Sprintf("%s%s%s %s", ServerColor, ServerTag, colorReset, message)
 }

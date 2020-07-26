@@ -6,14 +6,14 @@ import (
 )
 
 var (
-	colorReset  = "\033[0m"
-	colorRed    = "\033[31m"
-	colorGreen  = "\033[32m"
-	colorYellow = "\033[33m"
-	colorBlue   = "\033[34m"
-	colorPurple = "\033[35m"
-	colorCyan   = "\033[36m"
-	colorWhite  = "\033[37m"
+	colorReset  = "\u001b[0m"
+	colorRed    = "\u001b[31m"
+	colorGreen  = "\u001b[32m"
+	colorYellow = "\u001b[33m"
+	colorBlue   = "\u001b[34m"
+	colorPurple = "\u001b[35m"
+	colorCyan   = "\u001b[36m"
+	colorWhite  = "\u001b[37m"
 )
 var colors = []string{
 	colorRed,
