@@ -29,7 +29,6 @@ func newClient(conn net.Conn, send chan string) Client {
 }
 
 func (client Client) broadcast(message string) {
-
 	client.send <- client.wrapMessage(message)
 }
 

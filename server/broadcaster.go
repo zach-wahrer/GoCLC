@@ -97,5 +97,5 @@ func (b *Broadcaster) usernameAvailable(username string) bool {
 }
 
 func wrapServerMessage(message string) string {
-	return fmt.Sprintf("%s%s%s %s", ServerColor, ServerTag, colorReset, message)
+	return fmt.Sprintf("%s%s%s%s %s", ServerColor, colorBold, ServerTag, colorReset, message)
 }

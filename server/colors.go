@@ -7,6 +7,7 @@ import (
 
 var (
 	colorReset  = "\u001b[0m"
+	colorBold   = "\u001b[1m"
 	colorRed    = "\u001b[31m"
 	colorGreen  = "\u001b[32m"
 	colorYellow = "\u001b[33m"
