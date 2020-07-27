@@ -3,6 +3,7 @@ package client
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -32,13 +33,22 @@ func NewClient(address, port string) *client {
 
 func (c client) chat() {
 	reader := bufio.NewReader(c.input)
+	input := new(bytes.Buffer)
 	for {
-		input, _ := reader.ReadString('\n')
-		c.send(input)
-		if c.leaveChat(input) {
-			time.Sleep(5 * time.Millisecond)
-			break
+		rune, _, err := reader.ReadRune()
+		if err != nil {
+			log.Print(err)
 		}
+		input.WriteRune(rune)
+		if rune == '\n' {
+			if c.leaveChat(input.String()) {
+				time.Sleep(5 * time.Millisecond)
+				break
+			}
+			c.send(input.String())
+			input.Reset()
+		}
+
 	}
 }
 
