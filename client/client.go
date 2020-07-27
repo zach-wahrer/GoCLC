@@ -30,7 +30,7 @@ func (c client) Start() {
 	go c.receive()
 	go c.send()
 	c.chat()
-	time.Sleep(1 * time.Millisecond)
+	time.Sleep(5 * time.Millisecond)
 	os.Exit(0)
 }
 
@@ -46,6 +46,8 @@ func (c client) chat() {
 		}
 
 		if key == keyboard.KeyCtrlC || (key == keyboard.KeyEnter && c.leaveChat(c.buf.String())) {
+			c.buf.WriteRune('\n')
+			c.channel <- c.buf.Bytes()
 			break
 		}
 
