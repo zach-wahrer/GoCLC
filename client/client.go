@@ -30,7 +30,7 @@ func (c client) Start() {
 	go c.receive()
 	go c.send()
 	c.chat()
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(1 * time.Millisecond)
 	os.Exit(0)
 }
 
@@ -41,32 +41,31 @@ func NewClient(address, port string) *client {
 func (c client) chat() {
 	for {
 		rune, key, err := keyboard.GetSingleKey()
-		keyboard.Close()
 		if err != nil {
 			panic(err)
 		}
 
-		if key == keyboard.KeyCtrlC {
+		if key == keyboard.KeyCtrlC || (key == keyboard.KeyEnter && c.leaveChat(c.buf.String())) {
 			break
 		}
-		if key == keyboard.KeyEnter {
+
+		switch key {
+		case keyboard.KeyEnter:
 			c.buf.WriteRune('\n')
-			if c.leaveChat(c.buf.String()) {
-				break
-			}
 			c.channel <- c.buf.Bytes()
 			c.buf.Reset()
-			fmt.Print("\u001b[2K\u001b[1000D")
-		} else if key == keyboard.KeyBackspace || key == keyboard.KeyBackspace2 {
+		case keyboard.KeyBackspace, keyboard.KeyBackspace2:
 			count := utf8.RuneCountInString(c.buf.String())
 			if count > 0 {
 				c.buf.Truncate(count - 1)
 			}
-
-		} else {
+		case keyboard.KeySpace:
+			c.buf.WriteRune(' ')
+		default:
 			c.buf.WriteRune(rune)
 		}
-		fmt.Printf("\u001b[2K\u001b[1000D%s", c.buf.String())
+
+		fmt.Printf("\u001b[2K\u001b[1000D>%s", c.buf.String())
 	}
 }
 
