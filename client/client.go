@@ -17,6 +17,7 @@ import (
 type client struct {
 	remote net.Conn
 	input  io.Reader
+	buf    *bytes.Buffer
 }
 
 // Start manages the lifecycle of a client.
@@ -28,25 +29,24 @@ func (c client) Start() {
 }
 
 func NewClient(address, port string) *client {
-	return &client{connect(address, port), os.Stdin}
+	return &client{connect(address, port), os.Stdin, new(bytes.Buffer)}
 }
 
 func (c client) chat() {
 	reader := bufio.NewReader(c.input)
-	input := new(bytes.Buffer)
 	for {
 		rune, _, err := reader.ReadRune()
 		if err != nil {
 			log.Print(err)
 		}
-		input.WriteRune(rune)
+		c.buf.WriteRune(rune)
 		if rune == '\n' {
-			if c.leaveChat(input.String()) {
+			if c.leaveChat(c.buf.String()) {
 				time.Sleep(5 * time.Millisecond)
 				break
 			}
-			c.send(input.String())
-			input.Reset()
+			c.send(c.buf.String())
+			c.buf.Reset()
 		}
 
 	}
