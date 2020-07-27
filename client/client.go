@@ -12,57 +12,86 @@ import (
 	"server"
 	"strings"
 	"time"
+	"unicode/utf8"
+
+	"github.com/eiannone/keyboard"
 )
 
 type client struct {
-	remote net.Conn
-	input  io.Reader
-	buf    *bytes.Buffer
+	remote  net.Conn
+	input   io.Reader
+	buf     *bytes.Buffer
+	channel chan []byte
 }
 
 // Start manages the lifecycle of a client.
 func (c client) Start() {
 	defer c.remote.Close()
 	go c.receive()
+	go c.send()
 	c.chat()
+	time.Sleep(5 * time.Millisecond)
 	os.Exit(0)
 }
 
 func NewClient(address, port string) *client {
-	return &client{connect(address, port), os.Stdin, new(bytes.Buffer)}
+	return &client{connect(address, port), os.Stdin, new(bytes.Buffer), make(chan []byte)}
 }
 
 func (c client) chat() {
-	reader := bufio.NewReader(c.input)
 	for {
-		rune, _, err := reader.ReadRune()
+		rune, key, err := keyboard.GetSingleKey()
+		keyboard.Close()
 		if err != nil {
-			log.Print(err)
-		}
-		c.buf.WriteRune(rune)
-		if rune == '\n' {
-			if c.leaveChat(c.buf.String()) {
-				time.Sleep(5 * time.Millisecond)
-				break
-			}
-			c.send(c.buf.String())
-			c.buf.Reset()
+			panic(err)
 		}
 
+		if key == keyboard.KeyCtrlC {
+			break
+		}
+		if key == keyboard.KeyEnter {
+			c.buf.WriteRune('\n')
+			if c.leaveChat(c.buf.String()) {
+				break
+			}
+			c.channel <- c.buf.Bytes()
+			c.buf.Reset()
+			fmt.Print("\u001b[2K\u001b[1000D")
+		} else if key == keyboard.KeyBackspace || key == keyboard.KeyBackspace2 {
+			count := utf8.RuneCountInString(c.buf.String())
+			if count > 0 {
+				c.buf.Truncate(count - 1)
+			}
+
+		} else {
+			c.buf.WriteRune(rune)
+		}
+		fmt.Printf("\u001b[2K\u001b[1000D%s", c.buf.String())
 	}
 }
 
 func (c client) receive() {
 	server := bufio.NewScanner(c.remote)
 	for server.Scan() {
-		fmt.Println(server.Text())
+		c.printFromServer(server.Text())
 	}
 }
 
-func (c client) send(message string) {
-	if _, err := io.WriteString(c.remote, message); err != nil {
-		log.Print(err)
+func (c client) send() {
+	for {
+		buffer := <-c.channel
+		_, err := c.remote.Write(buffer)
+		if err != nil {
+			log.Print(err)
+		}
 	}
+
+}
+
+func (c client) printFromServer(message string) {
+	fmt.Print("\u001b[2K\u001b[1000D")
+	fmt.Println(message)
+	fmt.Print(c.buf.String())
 }
 
 func (c client) leaveChat(input string) bool {
