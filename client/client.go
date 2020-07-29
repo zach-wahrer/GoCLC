@@ -11,7 +11,6 @@ import (
 	"os"
 	"server"
 	"strings"
-	"time"
 
 	"github.com/jroimartin/gocui"
 )
@@ -22,58 +21,21 @@ type client struct {
 	buf    *bytes.Buffer
 }
 
-// Start manages the lifecycle of a client.
-func (c client) Start() {
-	defer c.remote.Close()
-	go c.runUI()
-	// go c.receive()
-	go c.send()
-	c.chat()
-	time.Sleep(5 * time.Millisecond)
-	os.Exit(0)
-}
-
 func NewClient(address, port string) *client {
 	return &client{connect(address, port), os.Stdin, new(bytes.Buffer)}
 }
 
-func (c client) chat() {
-	for {
+// Start manages the lifecycle of a client.
+func (c client) Start() {
+	defer c.remote.Close()
 
-		// if key == keyboard.KeyCtrlC || (key == keyboard.KeyEnter && c.leaveChat(c.buf.String())) {
-		// 	c.buf.WriteRune('\n')
-		// 	c.channel <- c.buf.Bytes()
-		// 	break
-		// }
-
-		// switch key {
-		// case keyboard.KeyEnter:
-		// 	c.buf.WriteRune('\n')
-		// 	c.channel <- c.buf.Bytes()
-		// 	c.buf.Reset()
-		// case keyboard.KeyBackspace, keyboard.KeyBackspace2:
-		// 	count := utf8.RuneCountInString(c.buf.String())
-		// 	if count > 0 {
-		// 		c.buf.Truncate(count - 1)
-		// 	}
-		// case keyboard.KeySpace:
-		// 	c.buf.WriteRune(' ')
-		// default:
-		// 	c.buf.WriteRune(rune)
-		// }
-
-		// fmt.Printf("\u001b[2K\u001b[1000D>%s", c.buf.String())
-	}
-}
-
-func (c client) runUI() {
 	ui, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
 		log.Panicln(err)
 	}
 	defer ui.Close()
 
-	ui.SetManagerFunc(layout)
+	ui.SetManagerFunc(c.layout)
 
 	if err := ui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
 		log.Panicln(err)
@@ -84,21 +46,23 @@ func (c client) runUI() {
 	}
 }
 
-func layout(g *gocui.Gui) error {
-	maxX, maxY := g.Size()
-	if v, err := g.SetView("users", 0, 0, maxX/6, maxY-1); err != nil {
+func (c client) layout(ui *gocui.Gui) error {
+	maxX, maxY := ui.Size()
+	if v, err := ui.SetView("users", 0, 0, maxX/6, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 		fmt.Fprintln(v, "GoCLC\n_____________")
 	}
-	if v, err := g.SetView("chat", maxX/6+1, 0, maxX-1, maxY-maxY/6); err != nil {
+	if v, err := ui.SetView("receive", maxX/6+1, 0, maxX-1, maxY-maxY/6); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		fmt.Fprintln(v, "Chat message")
+		v.Autoscroll = true
+		v.Wrap = true
+		go c.receive(ui, v)
 	}
-	if v, err := g.SetView("input", maxX/6+1, maxY-maxY/6+1, maxX-1, maxY-1); err != nil {
+	if v, err := ui.SetView("input", maxX/6+1, maxY-maxY/6+1, maxX-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -111,11 +75,23 @@ func quit(g *gocui.Gui, v *gocui.View) error {
 	return gocui.ErrQuit
 }
 
-func (c client) receive() {
+func (c client) receive(ui *gocui.Gui, v *gocui.View) {
 	server := bufio.NewScanner(c.remote)
 	for server.Scan() {
-		c.printFromServer(server.Text())
+		fmt.Fprintln(v, server.Text())
+		ui.Update(func(ui *gocui.Gui) error {
+			return c.updateView(ui, "receive")
+		})
 	}
+}
+
+func (c client) updateView(ui *gocui.Gui, viewName string) error {
+
+	_, err := ui.View(viewName)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c client) send() {
@@ -127,12 +103,6 @@ func (c client) send() {
 		// }
 	}
 
-}
-
-func (c client) printFromServer(message string) {
-	fmt.Print("\u001b[2K\u001b[1000D")
-	fmt.Println(message)
-	fmt.Print(c.buf.String())
 }
 
 func (c client) leaveChat(input string) bool {
