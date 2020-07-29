@@ -11,6 +11,7 @@ import (
 	"os"
 	"server"
 	"strings"
+	"time"
 
 	"github.com/jroimartin/gocui"
 )
@@ -37,9 +38,14 @@ func (c client) Start() {
 
 	ui.SetManagerFunc(c.layout)
 
-	if err := ui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, quit); err != nil {
+	if err := ui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, c.quit); err != nil {
 		log.Panicln(err)
 	}
+	if err := ui.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, c.sendInput); err != nil {
+		log.Panicln(err)
+	}
+
+	ui.SetCurrentView("input")
 
 	if err := ui.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
@@ -66,12 +72,23 @@ func (c client) layout(ui *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		fmt.Fprintln(v, "type here")
+		v.Editable = true
+		v.Autoscroll = true
+		v.Wrap = true
+		ui.SetCurrentView("input")
+
 	}
 	return nil
 }
 
-func quit(g *gocui.Gui, v *gocui.View) error {
+func (c client) quit(ui *gocui.Gui, v *gocui.View) error {
+	if _, err := c.remote.Write([]byte("/quit\n")); err != nil {
+		return err
+	}
+	ui.Update(func(ui *gocui.Gui) error {
+		return c.updateView(ui, "receive")
+	})
+	time.Sleep(1 * time.Second)
 	return gocui.ErrQuit
 }
 
@@ -85,24 +102,24 @@ func (c client) receive(ui *gocui.Gui, v *gocui.View) {
 	}
 }
 
-func (c client) updateView(ui *gocui.Gui, viewName string) error {
+func (c client) sendInput(ui *gocui.Gui, v *gocui.View) error {
+	if c.leaveChat(v.Buffer()) {
+		return c.quit(ui, v)
+	}
+	if _, err := c.remote.Write([]byte(v.Buffer())); err != nil {
+		return err
+	}
+	v.Clear()
+	v.SetCursor(0, 0)
+	return nil
+}
 
+func (c client) updateView(ui *gocui.Gui, viewName string) error {
 	_, err := ui.View(viewName)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-func (c client) send() {
-	for {
-		// buffer := <-c.channel
-		// _, err := c.remote.Write(buffer)
-		// if err != nil {
-		// 	log.Print(err)
-		// }
-	}
-
 }
 
 func (c client) leaveChat(input string) bool {
