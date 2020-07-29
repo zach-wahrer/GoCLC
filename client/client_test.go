@@ -34,29 +34,29 @@ func TestBasicClientReceive(t *testing.T) {
 	conn.Close()
 }
 
-func TestAdvancedClientReceive(t *testing.T) {
-	out := captureStdout(func() {
-		c := NewClient(goclctest.Address, goclctest.Port)
-		c.Start()
-	})
-	if !strings.Contains(out, server.ServerGreeting) {
-		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting, out)
-	}
-	if !strings.Contains(out, server.AskUsername) {
-		t.Errorf("client received unexpected reply - want: %s, got: %s", server.AskUsername, out)
-	}
-}
-
-func TestClientSend(t *testing.T) {
-	out := captureStdout(func() {
-		c := NewClient(goclctest.Address, goclctest.Port)
-		c.input = bytes.NewBufferString(goclctest.TestUsername + "\n" + "/exit")
-		go c.Start()
-	})
-	if !strings.Contains(out, server.UserGreeting) {
-		t.Errorf("client received unexpected reply - want: %s, got: %s", server.UserGreeting+" "+goclctest.TestUsername, out)
-	}
-}
+// func TestAdvancedClientReceive(t *testing.T) {
+// 	out := captureStdout(func() {
+// 		c := NewClient(goclctest.Address, goclctest.Port)
+// 		c.Start()
+// 	})
+// 	if !strings.Contains(out, server.ServerGreeting) {
+// 		t.Errorf("client received unexpected reply - want: %s, got: %s", server.ServerGreeting, out)
+// 	}
+// 	if !strings.Contains(out, server.AskUsername) {
+// 		t.Errorf("client received unexpected reply - want: %s, got: %s", server.AskUsername, out)
+// 	}
+// }
+//
+// func TestClientSend(t *testing.T) {
+// 	out := captureStdout(func() {
+// 		c := NewClient(goclctest.Address, goclctest.Port)
+// 		c.input = bytes.NewBufferString(goclctest.TestUsername + "\n" + "/exit")
+// 		go c.Start()
+// 	})
+// 	if !strings.Contains(out, server.UserGreeting) {
+// 		t.Errorf("client received unexpected reply - want: %s, got: %s", server.UserGreeting+" "+goclctest.TestUsername, out)
+// 	}
+// }
 
 func captureStdout(f func()) string {
 	old := os.Stdout
