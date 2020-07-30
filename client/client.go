@@ -3,7 +3,6 @@ package client
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -19,35 +18,39 @@ import (
 type client struct {
 	remote net.Conn
 	input  io.Reader
-	buf    *bytes.Buffer
+	ui     *gocui.Gui
 }
 
 func NewClient(address, port string) *client {
-	return &client{connect(address, port), os.Stdin, new(bytes.Buffer)}
+	ui, err := gocui.NewGui(gocui.OutputNormal)
+	if err != nil {
+		log.Panicln(err)
+	}
+	return &client{connect(address, port), os.Stdin, ui}
 }
 
 // Start manages the lifecycle of a client.
 func (c client) Start() {
 	defer c.remote.Close()
+	defer c.ui.Close()
 
-	ui, err := gocui.NewGui(gocui.OutputNormal)
-	if err != nil {
+	c.createUILayout()
+	c.createKeybindings()
+
+	if err := c.ui.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Panicln(err)
 	}
-	defer ui.Close()
+}
 
-	ui.SetManagerFunc(c.layout)
+func (c client) createUILayout() {
+	c.ui.SetManagerFunc(c.layout)
+}
 
-	if err := ui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, c.quit); err != nil {
+func (c client) createKeybindings() {
+	if err := c.ui.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, c.quit); err != nil {
 		log.Panicln(err)
 	}
-	if err := ui.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, c.sendInput); err != nil {
-		log.Panicln(err)
-	}
-
-	ui.SetCurrentView("input")
-
-	if err := ui.MainLoop(); err != nil && err != gocui.ErrQuit {
+	if err := c.ui.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, c.sendInput); err != nil {
 		log.Panicln(err)
 	}
 }
