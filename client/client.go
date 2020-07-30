@@ -4,10 +4,8 @@ package client
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"net"
-	"os"
 	"server"
 	"strings"
 	"time"
@@ -16,9 +14,8 @@ import (
 )
 
 type client struct {
-	remote net.Conn
-	input  io.Reader
-	ui     *gocui.Gui
+	remote   net.Conn
+	ui       *gocui.Gui
 }
 
 func NewClient(address, port string) *client {
@@ -26,7 +23,7 @@ func NewClient(address, port string) *client {
 	if err != nil {
 		log.Panicln(err)
 	}
-	return &client{connect(address, port), os.Stdin, ui}
+	return &client{connect(address, port), ui}
 }
 
 // Start manages the lifecycle of a client.
