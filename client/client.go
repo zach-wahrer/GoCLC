@@ -88,9 +88,6 @@ func (c client) quit(ui *gocui.Gui, v *gocui.View) error {
 	if _, err := c.remote.Write([]byte("/quit\n")); err != nil {
 		return err
 	}
-	ui.Update(func(ui *gocui.Gui) error {
-		return c.updateView(ui, "receive")
-	})
 	time.Sleep(1 * time.Second)
 	return gocui.ErrQuit
 }
@@ -100,7 +97,7 @@ func (c client) receive(ui *gocui.Gui, v *gocui.View) {
 	for server.Scan() {
 		fmt.Fprintln(v, server.Text())
 		ui.Update(func(ui *gocui.Gui) error {
-			return c.updateView(ui, "receive")
+			return c.updateView("receive")
 		})
 	}
 }
@@ -117,8 +114,8 @@ func (c client) sendInput(ui *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (c client) updateView(ui *gocui.Gui, viewName string) error {
-	_, err := ui.View(viewName)
+func (c client) updateView(viewName string) error {
+	_, err := c.ui.View(viewName)
 	if err != nil {
 		return err
 	}
