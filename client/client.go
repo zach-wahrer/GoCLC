@@ -14,8 +14,8 @@ import (
 )
 
 type client struct {
-	remote   net.Conn
-	ui       *gocui.Gui
+	remote net.Conn
+	ui     *gocui.Gui
 }
 
 func NewClient(address, port string) *client {
