@@ -19,7 +19,7 @@ type client struct {
 }
 
 func NewClient(address, port string) *client {
-	ui, err := gocui.NewGui(gocui.OutputNormal)
+	ui, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Panicln(err)
 	}
