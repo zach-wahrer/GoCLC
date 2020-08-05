@@ -14,6 +14,7 @@ From the root of the project:
 * `go test` will run integration tests for starting/running the server.
 * `go test server` will run all unit tests related to the server code.
 * `go test client` will run all unit tests related to the client code.
+* `pytest` will run unit tests for Python based helper code.
 
 ## Implemented Features
 * General chat
