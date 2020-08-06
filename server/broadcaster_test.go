@@ -84,7 +84,7 @@ func TestAttemptDuplicateUsernameForBroadcaster(t *testing.T) {
 
 func TestASCIIArtGeneration(t *testing.T) {
 	want := "| |_ ___ ___| |_\n|  _| -_|_ -|  _|\n|_| |___|___|_|"
-	got := createASCIIArt("test", "rectangles")
+	got := createASCIIArt("rectangles", "test")
 	for _, line := range strings.Split(want, "\n") {
 		if !strings.Contains(got, line) {
 			goclctest.InternalServerError(t, errors.New("ascii art not properly generated"))
@@ -94,7 +94,7 @@ func TestASCIIArtGeneration(t *testing.T) {
 
 func TestASCIIArtGenerationFailure(t *testing.T) {
 	want := ""
-	got := createASCIIArt("test", "1")
+	got := createASCIIArt("1", "test")
 	if got != want {
 		goclctest.InternalServerError(t, errors.New("ascii art returned a string when it should be empty"))
 	}
