@@ -90,5 +90,12 @@ func TestASCIIArtGeneration(t *testing.T) {
 			goclctest.InternalServerError(t, errors.New("ascii art not properly generated"))
 		}
 	}
+}
 
+func TestASCIIArtGenerationFailure(t *testing.T) {
+	want := ""
+	got := createASCIIArt("test", "1")
+	if got != want {
+		goclctest.InternalServerError(t, errors.New("ascii art returned a string when it should be empty"))
+	}
 }

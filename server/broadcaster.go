@@ -105,7 +105,7 @@ func wrapServerMessage(message string) string {
 func createASCIIArt(message, font string) string {
 	out, err := exec.Command("python3", "ascii_art", font, message).Output()
 	if err != nil {
-		log.Print(err)
+		log.Print(fmt.Sprintf("ASCII art not generated properly: %v", err))
 		return ""
 	}
 	return string(out)
