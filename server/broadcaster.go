@@ -47,7 +47,7 @@ func (b *Broadcaster) sendToAll(message string) {
 }
 
 func (b *Broadcaster) welcomeClient(client *Client) {
-	b.sendToOne(client, runCommand("/welcome"))
+	b.sendToOne(client, createASCIIArt("server/ascii_art", welcomeFont, runCommand("/welcome")))
 }
 
 func (b *Broadcaster) askUsername(client *Client) {
@@ -102,11 +102,11 @@ func wrapServerMessage(message string) string {
 	return fmt.Sprintf("%s%s%s%s %s", ServerColor, colorBold, ServerTag, colorReset, message)
 }
 
-func createASCIIArt(font, message string) string {
-	out, err := exec.Command("python3", "ascii_art", font, message).Output()
+func createASCIIArt(program, font, message string) string {
+	out, err := exec.Command("python3", program, font, message).Output()
 	if err != nil {
 		log.Print(fmt.Sprintf("ASCII art not generated properly: %v", err))
-		return ""
+		return message
 	}
 	return string(out)
 }
