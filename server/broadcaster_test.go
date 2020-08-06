@@ -81,3 +81,14 @@ func TestAttemptDuplicateUsernameForBroadcaster(t *testing.T) {
 		goclctest.InternalServerError(t, errors.New("duplicate client added to broadcaster"))
 	}
 }
+
+func TestASCIIArtGeneration(t *testing.T) {
+	want := "| |_ ___ ___| |_\n|  _| -_|_ -|  _|\n|_| |___|___|_|"
+	got := createASCIIArt("test", "rectangles")
+	for _, line := range strings.Split(want, "\n") {
+		if !strings.Contains(got, line) {
+			goclctest.InternalServerError(t, errors.New("ascii art not properly generated"))
+		}
+	}
+
+}
