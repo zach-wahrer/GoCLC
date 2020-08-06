@@ -41,15 +41,12 @@ func TestServerResponseForHelp(t *testing.T) {
 	goclctest.SendInputToServer(t, conn, "/help\n")
 
 	helpLines := len(strings.Split(HelpMessage, "\n"))
-	combinedReply := ""
 	for i := 0; i < helpLines-1; i++ {
 		receive.Scan()
-		combinedReply += receive.Text() + "\n"
+		if !strings.Contains(HelpMessage, receive.Text()) {
+			goclctest.UnexpectedServerReplyError(t, HelpMessage, receive.Text())
+		}
 	}
-	if !strings.Contains(combinedReply, HelpMessage) {
-		goclctest.UnexpectedServerReplyError(t, HelpMessage, combinedReply)
-	}
-
 	goclctest.SendInputToServer(t, conn, "/exit\n")
 }
 
@@ -65,8 +62,8 @@ func TestServerFixture(t *testing.T) {
 	receive := bufio.NewScanner(conn)
 
 	receive.Scan()
-	if !strings.Contains(receive.Text()+"\n", ServerGreeting) {
-		goclctest.UnexpectedServerReplyError(t, ServerGreeting, receive.Text())
+	if !strings.Contains(receive.Text()+"\n", ServerWelcome) {
+		goclctest.UnexpectedServerReplyError(t, ServerWelcome, receive.Text())
 	}
 
 	receive.Scan()

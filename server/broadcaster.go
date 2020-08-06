@@ -45,7 +45,7 @@ func (b *Broadcaster) sendToAll(message string) {
 }
 
 func (b *Broadcaster) welcomeClient(client *Client) {
-	b.sendToOne(client, runCommand("/greet"))
+	b.sendToOne(client, runCommand("/welcome"))
 }
 
 func (b *Broadcaster) askUsername(client *Client) {

@@ -4,10 +4,10 @@ import (
 	"testing"
 )
 
-func TestCommandGreet(t *testing.T) {
-	got := runCommand("/greet")
-	if got != ServerGreeting {
-		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", ServerGreeting, got)
+func TestCommandWelcome(t *testing.T) {
+	got := runCommand("/welcome")
+	if got != ServerWelcome {
+		t.Errorf("unexpected command response: want \"%s\", got \"%s\"", ServerWelcome, got)
 	}
 }
 
